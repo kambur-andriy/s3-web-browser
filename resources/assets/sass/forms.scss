@@ -1,0 +1,46 @@
+// Variables
+@import "variables";
+
+textarea {
+    resize: none;
+}
+
+
+select:read-only {
+
+    &:focus {
+        background-image: linear-gradient(0deg, #9c27b0 2px, rgba(156, 39, 176, 0) 0), linear-gradient(0deg, #d2d2d2 1px, hsla(0, 0%, 82%, 0) 0);
+    }
+
+}
+
+
+.spinner-container {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    color: inherit;
+    background-color: inherit;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
