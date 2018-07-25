@@ -6,8 +6,9 @@ S3 Web Browser is a Laravel application which allow working with S3 bucket via a
 # Installation
 
 1. Check out the latest release from GitHub:
-    
+```    
     git clone https://github.com/kambur-andriy/s3-web-browser.git
+```    
     
 2. Configure a Web Server:
 
@@ -15,8 +16,8 @@ S3 Web Browser is a Laravel application which allow working with S3 bucket via a
     
     * Add VirtualHost for new domain
     
+    ```        
         <VirtualHost *:80>
-
             ServerName s3-browser.com
             DocumentRoot /var/www/html/s3-browser/public
         
@@ -29,13 +30,15 @@ S3 Web Browser is a Laravel application which allow working with S3 bucket via a
         
             ErrorLog ${APACHE_LOG_DIR}/error.log
             CustomLog ${APACHE_LOG_DIR}/access.log combined
-            
         </VirtualHost>
+    ```
 
     * Reload Apache Server
     
+    ```        
         service apache2 reload
-        
+    ```        
+           
 3. Configure S3 Web Browser
 
     * Go to project folder
