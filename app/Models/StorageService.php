@@ -168,7 +168,7 @@ class StorageService
 
 		foreach ($pathList as $path) {
 
-			if (!$this->removeDirectory($path) && !$this->removeFile($path)) {
+			if (!$this->removeFile($path) && !$this->removeDirectory($path)) {
 				throw new StorageException('Can not remove files or directories');
 			}
 

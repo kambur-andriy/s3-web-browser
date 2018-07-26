@@ -11,6 +11,7 @@ use App\Http\Requests\ContentRemove;
 use App\Http\Requests\ContentRename;
 use App\Http\Requests\DirectoryMake;
 use App\Http\Requests\FileDownload;
+use App\Http\Requests\FileUpload;
 use App\Models\StorageService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
