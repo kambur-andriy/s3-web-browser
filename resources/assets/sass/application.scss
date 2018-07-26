@@ -17,6 +17,8 @@
 // Tables
 @import "tables";
 
+// Loaders
+@import "loaders";
 
 .breadcrumb {
 
@@ -36,4 +38,12 @@
 
     margin-top: 0 !important;
 
+}
+
+
+#show_process {
+
+    position: relative;
+
+    height: 40px;
 }

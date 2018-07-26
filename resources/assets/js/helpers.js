@@ -139,11 +139,11 @@ window.showEdit = (title, form) => {
 }
 
 // Spinner
-window.showSpinner = button => {
+window.showSpinner = target => {
 
-    button.prop('disabled', true);
+    target.prop('disabled', true);
 
-    button
+    target
         .append(
             $('<div />')
                 .addClass('spinner-container')
@@ -158,6 +158,25 @@ window.hideSpinner = target => {
     target.prop('disabled', false);
 
     $('.spinner-container').remove();
+
+}
+
+window.startProcess = () => {
+
+    $('body')
+        .append(
+            $('<div />')
+                .addClass('process-container')
+                .append(
+                    $('<i />').addClass('material-icons spinner').html('autorenew')
+                )
+        )
+
+}
+
+window.stopProcess = () => {
+
+    $('.process-container').remove();
 
 }
 

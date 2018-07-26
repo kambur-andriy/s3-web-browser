@@ -7,21 +7,7 @@ require('./helpers');
  */
 const getContent = (path = '.') => {
 
-    $('#content_list tbody').empty();
-
-    $('#content_list tbody')
-        .append(
-            $('<tr>')
-                .append('<td / >')
-                .attr(
-                    {
-                        colspan: 4,
-                        id: 'show_process'
-                    }
-                )
-        );
-
-    showSpinner($('#show_process'));
+    startProcess();
 
     axios.get(
         '/api/list',
@@ -34,6 +20,8 @@ const getContent = (path = '.') => {
     )
         .then(
             response => {
+
+                stopProcess();
 
                 $('#content_list tbody').empty();
 
@@ -300,6 +288,8 @@ const makeDirectory = () => {
 
     }
 
+    startProcess();
+
     axios.post(
         '/api/make-directory',
         qs.stringify(
@@ -311,7 +301,12 @@ const makeDirectory = () => {
         .then(
             () => {
 
-                getContent(currentDirectory);
+                stopProcess();
+
+                showMessage('Done.')
+                    .then(
+                        () => getContent(currentDirectory)
+                    );
 
             }
         )
@@ -339,6 +334,8 @@ const renameContent = path => {
 
     }
 
+    startProcess();
+
     axios.post(
         '/api/rename',
         qs.stringify(
@@ -351,9 +348,18 @@ const renameContent = path => {
         .then(
             () => {
 
-                const currentDirectory = $('#current_directory').data('path');
+                stopProcess();
 
-                getContent(currentDirectory);
+                showMessage('Done.')
+                    .then(
+                        () => {
+
+                            const currentDirectory = $('#current_directory').data('path');
+
+                            getContent(currentDirectory);
+
+                        }
+                    );
 
             }
         )
@@ -385,6 +391,7 @@ const removeContent = () => {
 
     }
 
+    startProcess();
 
     axios.post(
         '/api/remove',
@@ -397,9 +404,18 @@ const removeContent = () => {
         .then(
             () => {
 
-                const currentDirectory = $('#current_directory').data('path');
+                stopProcess();
 
-                getContent(currentDirectory);
+                showMessage('Done.')
+                    .then(
+                        () => {
+
+                            const currentDirectory = $('#current_directory').data('path');
+
+                            getContent(currentDirectory);
+
+                        }
+                    );
 
             }
         )
@@ -427,6 +443,8 @@ const pasteContent = () => {
 
     const currentDirectory = $('#current_directory').data('path');
 
+    startProcess();
+
     axios.post(
         '/api/paste',
         qs.stringify(
@@ -440,9 +458,14 @@ const pasteContent = () => {
         .then(
             () => {
 
+                stopProcess();
+
                 sessionStorage.clear();
 
-                getContent(currentDirectory);
+                showMessage('Done.')
+                    .then(
+                        () => getContent(currentDirectory)
+                    );
 
             }
         )
@@ -482,6 +505,8 @@ const uploadFiles = () => {
 
     requestData.append('path', currentDirectory);
 
+    startProcess();
+
     axios.post(
         '/api/upload',
         requestData
@@ -489,7 +514,12 @@ const uploadFiles = () => {
         .then(
             () => {
 
-                getContent(currentDirectory);
+                stopProcess();
+
+                showMessage('Done')
+                    .then(
+                        () => getContent(currentDirectory)
+                    );
 
             }
         )
@@ -610,6 +640,10 @@ $(document).ready(function () {
 
         let path = row.find('input[type="checkbox"]').val();
 
+        const button = $(this);
+
+        showSpinner(button);
+
         axios.get(
             '/api/info',
             {
@@ -621,6 +655,8 @@ $(document).ready(function () {
             .then(
                 response => {
 
+                    hideSpinner(button);
+
                     row.find('.td-size').text(response.data.size);
                     row.find('.td-modified').text(response.data.modified);
 
@@ -628,6 +664,8 @@ $(document).ready(function () {
             )
             .catch(
                 error => {
+
+                    hideSpinner(button);
 
                     showError(error.response.data.message);
 
