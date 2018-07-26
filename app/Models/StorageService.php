@@ -80,9 +80,11 @@ class StorageService
 
 		$path = $request->path;
 
+		$lastModified = $this->storage->lastModified($path);
+
 		$info = [
 			'size' => $this->fileSize($path) ?? $this->directorySize($path),
-			'modified' => date('d-m-Y H:i:s', $this->storage->lastModified($path)) ?? ''
+			'modified' => $lastModified !== false ? date('d-m-Y H:i:s', $this->storage->lastModified($path)) : '---'
 		];
 
 		return $info;
