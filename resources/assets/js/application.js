@@ -35,6 +35,8 @@ const getContent = (path = '.') => {
         .catch(
             error => {
 
+                stopProcess();
+
                 showError(error.response.data.message);
 
             }
@@ -110,26 +112,7 @@ const showDirectories = directoriesList => {
                     .append(
                         $('<td />')
                             .addClass('td-actions text-right')
-                            .append(
-                                $('<button />')
-                                    .addClass('btn btn-info btn-sm ml-2 info-btn')
-                                    .attr('type', 'button')
-                                    .append(
-                                        $('<i />')
-                                            .addClass('material-icons')
-                                            .text('info')
-                                    )
-                            )
-                            .append(
-                                $('<button />')
-                                    .addClass('btn btn-warning btn-sm ml-2 rename-btn')
-                                    .attr('type', 'button')
-                                    .append(
-                                        $('<i />')
-                                            .addClass('material-icons')
-                                            .text('question_answer')
-                                    )
-                            )
+                            .html('')
                     )
             )
 
@@ -202,8 +185,14 @@ const showFiles = filesList => {
                             .addClass('td-actions text-right')
                             .append(
                                 $('<button />')
-                                    .addClass('btn btn-success btn-sm download-btn')
-                                    .attr('type', 'button')
+                                    .addClass('btn btn-success btn-sm tooltip-btn download-btn')
+                                    .attr(
+                                        {
+                                            'type': 'button',
+                                            'rel': 'tooltip',
+                                            'data-original-title': 'Download'
+                                        }
+                                    )
                                     .append(
                                         $('<i />')
                                             .addClass('material-icons')
@@ -212,8 +201,14 @@ const showFiles = filesList => {
                             )
                             .append(
                                 $('<button />')
-                                    .addClass('btn btn-info btn-sm ml-2 info-btn')
-                                    .attr('type', 'button')
+                                    .addClass('btn btn-info btn-sm ml-2 tooltip-btn info-btn')
+                                    .attr(
+                                        {
+                                            'type': 'button',
+                                            'data-placement': 'top',
+                                            'title': 'Info'
+                                        }
+                                    )
                                     .append(
                                         $('<i />')
                                             .addClass('material-icons')
@@ -222,8 +217,15 @@ const showFiles = filesList => {
                             )
                             .append(
                                 $('<button />')
-                                    .addClass('btn btn-warning btn-sm rename-btn  ml-2')
-                                    .attr('type', 'button')
+                                    .addClass('btn btn-warning btn-sm ml-2 tooltip-btn rename-btn')
+                                    .attr(
+                                        {
+                                            'type': 'button',
+                                            'data-toggle': 'tooltip',
+                                            'data-placement': 'top',
+                                            'title': 'Rename'
+                                        }
+                                    )
                                     .append(
                                         $('<i />')
                                             .addClass('material-icons')
@@ -233,6 +235,10 @@ const showFiles = filesList => {
                     )
             )
 
+    });
+
+    $('.tooltip-btn').each(function() {
+        $(this).tooltip();
     });
 
 }
@@ -313,6 +319,8 @@ const makeDirectory = () => {
         .catch(
             error => {
 
+                stopProcess();
+
                 showError(error.response.data.message);
 
             }
@@ -365,6 +373,8 @@ const renameContent = path => {
         )
         .catch(
             error => {
+
+                stopProcess();
 
                 showError(error.response.data.message);
 
@@ -422,6 +432,8 @@ const removeContent = () => {
         .catch(
             error => {
 
+                stopProcess();
+
                 showError(error.response.data.message);
 
             }
@@ -472,6 +484,8 @@ const pasteContent = () => {
         .catch(
             error => {
 
+                stopProcess();
+
                 showError(error.response.data.message);
 
             }
@@ -497,7 +511,7 @@ const uploadFiles = () => {
 
     }
 
-    for(let i=0; i< files.length; i++) {
+    for (let i = 0; i < files.length; i++) {
 
         requestData.append('files_list[]', files[i]);
 
@@ -526,6 +540,8 @@ const uploadFiles = () => {
         .catch(
             error => {
 
+                stopProcess();
+
                 showError(error.response.data.message);
 
             }
@@ -547,7 +563,7 @@ $(document).ready(function () {
 
         event.preventDefault();
 
-        $('input[name="local_file"]').val($(this)[0].files.length +' files selected');
+        $('input[name="local_file"]').val($(this)[0].files.length + ' files selected');
 
     });
 
@@ -558,7 +574,6 @@ $(document).ready(function () {
         $('#local_file').trigger('click');
 
     });
-
 
 
     /**
@@ -920,4 +935,8 @@ $(document).ready(function () {
      */
     getContent();
 
+
+    // $(document).on('click', '.download-btn', function() {
+    //     alert('Yo');
+    // });
 });

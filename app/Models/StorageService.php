@@ -74,44 +74,63 @@ class StorageService
 	 * @param ContentInfo $request
 	 *
 	 * @return array
+	 *
+	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
 	 */
 	public function info(ContentInfo $request)
 	{
 
 		$path = $request->path;
 
+		$this->checkExists($path);
+
+		$size = $this->isFile($path) ? $this->fileSize($path) : $this->directorySize($path);
 		$lastModified = $this->storage->lastModified($path);
 
-		$info = [
-			'size' => $this->fileSize($path) ?? $this->directorySize($path),
+		return  [
+			'size' => $size,
 			'modified' => $lastModified !== false ? date('d-m-Y H:i:s', $this->storage->lastModified($path)) : '---'
 		];
-
-		return $info;
 
 	}
 
 	/**
-	 * Rename content
+	 * Rename file or directory
 	 *
 	 * @param ContentRename $request
 	 *
 	 * @return void
 	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
 	 */
 	public function rename(ContentRename $request)
 	{
 
-		$path = $request->path;
-		$name = $request->name;
+		$sourcePath = $request->path;
+		$newName = $request->name;
 
-		$this->checkExists($path);
+		$this->checkExists($sourcePath);
 
-		$info = pathinfo($path);
+		$info = pathinfo($sourcePath);
 
-		$this->checkUnique($info['dirname'], $name);
+		$destinationPath = $info['dirname'] . '/' . $newName;
 
-		$this->storage->move($path, $info['dirname'] . '/' . $name);
+		$this->checkUnique($destinationPath);
+
+		try {
+
+			if ($this->isFile($sourcePath)) {
+
+				$this->storage->move($sourcePath, $destinationPath);
+
+			}
+
+		} catch(StorageException $e) {
+
+			throw new StorageException('Can not rename file or directory');
+
+		}
 
 	}
 
@@ -149,9 +168,11 @@ class StorageService
 
 		$directoryName = $request->name;
 
-		$this->checkUnique($parentDirectory, $directoryName);
+		$sourcePath = $parentDirectory . '/' . $directoryName;
 
-		$this->createDirectory($parentDirectory . '/' . $directoryName);
+		$this->checkUnique($sourcePath);
+
+		$this->createDirectory($sourcePath);
 
 	}
 
@@ -162,6 +183,7 @@ class StorageService
 	 *
 	 * @return void
 	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
 	 */
 	public function remove(ContentRemove $request)
 	{
@@ -170,8 +192,18 @@ class StorageService
 
 		foreach ($pathList as $path) {
 
-			if (!$this->removeFile($path) && !$this->removeDirectory($path)) {
+			if ($this->isFile($path)) {
+
+				$this->removeFile($path);
+
+			} else if ($this->isDirectory($path)) {
+
+				$this->removeDirectory($path);
+
+			} else {
+
 				throw new StorageException('Can not remove files or directories');
+
 			}
 
 		}
@@ -185,6 +217,7 @@ class StorageService
 	 *
 	 * @return void
 	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
 	 */
 	public function paste(ContentPaste $request)
 	{
@@ -201,15 +234,11 @@ class StorageService
 
 			if ($operation === 'copy') {
 
-				if(!$this->copyFile($sourcePath, $destinationPath) && !$this->copyDirectory($sourcePath, $destinationPath)) {
-					throw new StorageException('Can not copy files or directories');
-				}
+				$this->copy($sourcePath, $destinationPath);
 
 			} else {
 
-				if(!$this->moveFile($sourcePath, $destinationPath) && !$this->moveDirectory($sourcePath, $destinationPath)) {
-					throw new StorageException('Can not cut files or directories');
-				}
+				$this->move($sourcePath, $destinationPath);
 
 			}
 		}
@@ -254,15 +283,7 @@ class StorageService
 	private function fileSize($path)
 	{
 
-		$size = $this->storage->size($path);
-
-		if ($size === false) {
-
-			return null;
-
-		}
-
-		return $size;
+		return (int) $this->storage->size($path);
 
 	}
 
@@ -485,30 +506,33 @@ class StorageService
 	/**
 	 * Check if file/directory name is unique
 	 *
-	 * @param string $parentDirectory
-	 * @param string $name
+	 * @param string $path
 	 *
 	 * return void
 	 * @throws StorageException
 	 */
-	private function checkUnique($parentDirectory, $name)
+	private function checkUnique($path)
 	{
 
-		$directoriesList = $this->directories($parentDirectory);
-
-		foreach ($directoriesList as $directory) {
-			if ($directory['name'] === $name) {
-				throw new StorageException('Directory already exist.');
-			}
+		if ($this->storage->exists($path)) {
+			throw new StorageException('File or directory already exists.');
 		}
 
-		$filesList = $this->files($parentDirectory);
-
-		foreach ($filesList as $file) {
-			if ($file['name'] === $name) {
-				throw new StorageException('File already exist.');
-			}
-		}
+//		$directoriesList = $this->directories($parentDirectory);
+//
+//		foreach ($directoriesList as $directory) {
+//			if ($directory['name'] === $name) {
+//				throw new StorageException('Directory already exist.');
+//			}
+//		}
+//
+//		$filesList = $this->files($parentDirectory);
+//
+//		foreach ($filesList as $file) {
+//			if ($file['name'] === $name) {
+//				throw new StorageException('File already exist.');
+//			}
+//		}
 
 	}
 
@@ -581,15 +605,13 @@ class StorageService
 
 			$filePath = $this->getCopyFilePath($sourcePath, $destinationPath);
 
-			$this->storage->copy($sourcePath, $filePath);
+			return $this->storage->copy($sourcePath, $filePath);
 
 		} catch (\Exception $e) {
 
-			return false;
+			throw new StorageException('Can not copy files.');
 
 		}
-
-		return true;
 
 	}
 
@@ -611,15 +633,13 @@ class StorageService
 
 			$filePath = $this->getCopyFilePath($sourcePath, $destinationPath);
 
-			$this->storage->move($sourcePath, $filePath);
+			return $this->storage->move($sourcePath, $filePath);
 
 		} catch (\Exception $e) {
 
-			return false;
+			throw new StorageException('Can not move files.');
 
 		}
-
-		return true;
 
 	}
 
@@ -820,5 +840,88 @@ class StorageService
 
 	}
 
+	/**
+	 * Check if path is a directory
+	 *
+	 * @param string $path
+	 *
+	 * @return bool
+	 * @throws \League\Flysystem\FileNotFoundException
+	 */
+	private function isDirectory($path) {
+
+		return $this->storage->getMimetype($path) === false;
+
+	}
+
+	/**
+	 * Check if path is file
+	 *
+	 * @param string $path
+	 *
+	 * @return bool
+	 * @throws \League\Flysystem\FileNotFoundException
+	 */
+	private function isFile($path) {
+
+		return $this->storage->getMimetype($path) !== false;
+
+	}
+
+	/**
+	 * Copy file or directory
+	 *
+	 * @param string $sourcePath
+	 * @param string $destinationPath
+	 *
+	 * @return void
+	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
+	 */
+	private function copy($sourcePath, $destinationPath) {
+
+		if ($this->isFile($sourcePath)) {
+
+			$this->copyFile($sourcePath, $destinationPath);
+
+		} else if ($this->isDirectory($sourcePath)) {
+
+			$this->copyDirectory($sourcePath, $destinationPath);
+
+		} else {
+
+			throw new StorageException('Can not copy files or directories');
+
+		}
+
+	}
+
+	/**
+	 * Move file or directory
+	 *
+	 * @param string $sourcePath
+	 * @param string $destinationPath
+	 *
+	 * @return void
+	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
+	 */
+	private function move($sourcePath, $destinationPath) {
+
+		if ($this->isFile($sourcePath)) {
+
+			$this->moveFile($sourcePath, $destinationPath);
+
+		} else if ($this->isDirectory($sourcePath)) {
+
+			$this->moveDirectory($sourcePath, $destinationPath);
+
+		} else {
+
+			throw new StorageException('Can not move files or directories');
+
+		}
+
+	}
 
 }
