@@ -186,13 +186,7 @@ const showFiles = filesList => {
                             .append(
                                 $('<button />')
                                     .addClass('btn btn-success btn-sm tooltip-btn download-btn')
-                                    .attr(
-                                        {
-                                            'type': 'button',
-                                            'rel': 'tooltip',
-                                            'data-original-title': 'Download'
-                                        }
-                                    )
+                                    .attr('type', 'button')
                                     .append(
                                         $('<i />')
                                             .addClass('material-icons')
@@ -202,13 +196,7 @@ const showFiles = filesList => {
                             .append(
                                 $('<button />')
                                     .addClass('btn btn-info btn-sm ml-2 tooltip-btn info-btn')
-                                    .attr(
-                                        {
-                                            'type': 'button',
-                                            'data-placement': 'top',
-                                            'title': 'Info'
-                                        }
-                                    )
+                                    .attr('type', 'button')
                                     .append(
                                         $('<i />')
                                             .addClass('material-icons')
@@ -218,14 +206,7 @@ const showFiles = filesList => {
                             .append(
                                 $('<button />')
                                     .addClass('btn btn-warning btn-sm ml-2 tooltip-btn rename-btn')
-                                    .attr(
-                                        {
-                                            'type': 'button',
-                                            'data-toggle': 'tooltip',
-                                            'data-placement': 'top',
-                                            'title': 'Rename'
-                                        }
-                                    )
+                                    .attr('type', 'button')
                                     .append(
                                         $('<i />')
                                             .addClass('material-icons')
@@ -235,10 +216,6 @@ const showFiles = filesList => {
                     )
             )
 
-    });
-
-    $('.tooltip-btn').each(function() {
-        $(this).tooltip();
     });
 
 }
