@@ -27,8 +27,12 @@ const getContent = (path = '.') => {
 
                 showInfo(response.data.info)
                 showNavigation(response.data.quick_navigation)
-                showDirectories(response.data.directories);
-                showFiles(response.data.files);
+                showDirectories(
+                    sortByName(response.data.directories)
+                );
+                showFiles(
+                    sortByName(response.data.files)
+                );
 
             }
         )
@@ -526,6 +530,50 @@ const uploadFiles = () => {
 
 }
 
+const sortByName = list => {
+
+    if (!$('#sort_content').hasClass('asc') && !$('#sort_content').hasClass('desc')) {
+        return list;
+    }
+
+    const sortOrder = $('#sort_content').hasClass('asc') ? -1 : 1;
+
+
+    list.sort(
+        (fileSource, fileDest) => {
+
+            if (fileSource.name < fileDest.name) {
+                return sortOrder;
+            }
+            if (fileSource.name > fileDest.name) {
+                return sortOrder;
+            }
+
+
+            return 0;
+        }
+    );
+
+    return list;
+
+}
+
+const navigate = path => {
+
+    let navigationHistory = JSON.parse(sessionStorage.getItem('navigation_history'));
+
+    if (!navigationHistory) {
+        navigationHistory = [];
+    }
+
+    const position = navigationHistory.length;
+
+    navigationHistory.push(path);
+
+    sessionStorage.setItem('navigation_history', JSON.stringify(navigationHistory));
+    sessionStorage.setItem('navigation_position', position);
+
+}
 
 /**
  * Document ready
@@ -619,6 +667,8 @@ $(document).ready(function () {
         event.preventDefault();
 
         const directory = $(this).attr('href');
+
+        navigate(directory);
 
         getContent(directory);
 
@@ -907,13 +957,78 @@ $(document).ready(function () {
 
     });
 
+    $('#sort_content').on('click', function(event) {
+
+        event.preventDefault();
+
+        $(this).toggleClass('asc desc');
+
+        const currentDirectory = $('#current_directory').data('path');
+
+        getContent(currentDirectory);
+
+    });
+
+    $('#move_back').on('click', function(event) {
+
+        event.preventDefault();
+
+        const position = sessionStorage.getItem('navigation_position');
+
+        let navigationHistory = JSON.parse(sessionStorage.getItem('navigation_history'));
+
+        if (!navigationHistory) {
+            return;
+        }
+
+        const newPosition = parseInt(position, 10) - 1;
+
+        const path = navigationHistory[newPosition];
+
+        if (path === undefined) {
+            return;
+        }
+
+        sessionStorage.setItem('navigation_position', newPosition);
+
+        getContent(path);
+
+
+    });
+
+    $('#move_forward').on('click', function(event) {
+
+        event.preventDefault();
+
+        const position = sessionStorage.getItem('navigation_position');
+
+        let navigationHistory = JSON.parse(sessionStorage.getItem('navigation_history'));
+
+        if (!navigationHistory) {
+            return;
+        }
+
+        const newPosition = parseInt(position, 10) + 1;
+
+        const path = navigationHistory[newPosition];
+
+        if (path === undefined) {
+            return;
+        }
+
+        sessionStorage.setItem('navigation_position', newPosition);
+
+        getContent(path);
+
+
+    });
+
     /**
      * Start application
      */
+    navigate('.');
+
     getContent();
 
 
-    // $(document).on('click', '.download-btn', function() {
-    //     alert('Yo');
-    // });
 });
