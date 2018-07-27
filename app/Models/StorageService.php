@@ -27,9 +27,9 @@ class StorageService
 	private $storage;
 
 	/**
-	 * AccountAuthService constructor.
+	 * StorageService constructor.
 	 *
-	 * @param  FilesystemAdapter $storage
+	 * @param FilesystemAdapter $storage
 	 */
 	public function __construct(FilesystemAdapter $storage)
 	{
@@ -69,7 +69,7 @@ class StorageService
 	}
 
 	/**
-	 * Get files list
+	 * Get file info
 	 *
 	 * @param ContentInfo $request
 	 *
@@ -476,7 +476,7 @@ class StorageService
 
 		if (count($pathParts) === 1) {
 
-			$directoriesList;
+			return $directoriesList;
 
 		}
 
@@ -490,7 +490,7 @@ class StorageService
 
 			$path .= $s3Directory;
 
-			$directoriesList[] = (object)[
+			$directoriesList[] = [
 				'name' => $s3Directory,
 				'path' => $path,
 			];
@@ -517,22 +517,6 @@ class StorageService
 		if ($this->storage->exists($path)) {
 			throw new StorageException('File or directory already exists.');
 		}
-
-//		$directoriesList = $this->directories($parentDirectory);
-//
-//		foreach ($directoriesList as $directory) {
-//			if ($directory['name'] === $name) {
-//				throw new StorageException('Directory already exist.');
-//			}
-//		}
-//
-//		$filesList = $this->files($parentDirectory);
-//
-//		foreach ($filesList as $file) {
-//			if ($file['name'] === $name) {
-//				throw new StorageException('File already exist.');
-//			}
-//		}
 
 	}
 
