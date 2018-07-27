@@ -229,7 +229,7 @@ const showFiles = filesList => {
                                     .append(
                                         $('<i />')
                                             .addClass('material-icons')
-                                            .text('question_answer')
+                                            .text('create')
                                     )
                             )
                     )
@@ -309,10 +309,7 @@ const makeDirectory = () => {
 
                 stopProcess();
 
-                showMessage('Done.')
-                    .then(
-                        () => getContent(currentDirectory)
-                    );
+                getContent(currentDirectory);
 
             }
         )
@@ -358,16 +355,9 @@ const renameContent = path => {
 
                 stopProcess();
 
-                showMessage('Done.')
-                    .then(
-                        () => {
+                const currentDirectory = $('#current_directory').data('path');
 
-                            const currentDirectory = $('#current_directory').data('path');
-
-                            getContent(currentDirectory);
-
-                        }
-                    );
+                getContent(currentDirectory);
 
             }
         )
@@ -416,16 +406,9 @@ const removeContent = () => {
 
                 stopProcess();
 
-                showMessage('Done.')
-                    .then(
-                        () => {
+                const currentDirectory = $('#current_directory').data('path');
 
-                            const currentDirectory = $('#current_directory').data('path');
-
-                            getContent(currentDirectory);
-
-                        }
-                    );
+                getContent(currentDirectory);
 
             }
         )
@@ -474,10 +457,7 @@ const pasteContent = () => {
 
                 sessionStorage.clear();
 
-                showMessage('Done.')
-                    .then(
-                        () => getContent(currentDirectory)
-                    );
+                getContent(currentDirectory);
 
             }
         )
@@ -530,10 +510,7 @@ const uploadFiles = () => {
 
                 stopProcess();
 
-                showMessage('Done')
-                    .then(
-                        () => getContent(currentDirectory)
-                    );
+                getContent(currentDirectory);
 
             }
         )
