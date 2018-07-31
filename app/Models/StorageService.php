@@ -110,30 +110,38 @@ class StorageService
 		$sourcePath = $request->path;
 		$newName = $request->name;
 
-		$this->checkExists($sourcePath);
-
 		$info = pathinfo($sourcePath);
 
 		$destinationPath = $info['dirname'] . '/' . $newName;
 
 		$this->checkUnique($destinationPath);
 
-		try {
+		if ($this->isFile($sourcePath)) {
 
-			if ($this->isFile($sourcePath)) {
+			$this->storage->move($sourcePath, $destinationPath);
 
-				$this->storage->move($sourcePath, $destinationPath);
+		} elseif ($this->isDirectory($sourcePath)) {
 
+			$this->createDirectory($destinationPath);
+
+			$subDirectories = $this->directories($sourcePath);
+
+			foreach ($subDirectories as $subDirectory) {
+				$this->moveDirectory($subDirectory['path'], $destinationPath);
 			}
 
-		} catch(StorageException $e) {
+			$files = $this->files($sourcePath);
 
-			throw new StorageException('Can not rename file or directory');
+			foreach ($files as $file) {
+				$this->moveFile($file['path'], $destinationPath);
+			}
+
+			$this->removeDirectory($sourcePath);
 
 		}
 
 	}
-
+	
 	/**
 	 * Download file
 	 *
