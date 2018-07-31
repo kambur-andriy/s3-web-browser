@@ -116,7 +116,40 @@ const showDirectories = directoriesList => {
                     .append(
                         $('<td />')
                             .addClass('td-actions text-right')
-                            .html('')
+                            .append(
+                                $('<button />')
+                                    .addClass('btn btn-info btn-sm ml-2 tooltip-btn info-btn')
+                                    .attr(
+                                        {
+                                            'type': 'button',
+                                            'data-placement': 'top',
+                                            'title': 'Info'
+                                        }
+                                    )
+                                    .append(
+                                        $('<i />')
+                                            .addClass('material-icons')
+                                            .text('info')
+                                    )
+                            )
+                            .append(
+                                $('<button />')
+                                    .addClass('btn btn-warning btn-sm ml-2 tooltip-btn rename-btn')
+                                    .attr(
+                                        {
+                                            'type': 'button',
+                                            'data-toggle': 'tooltip',
+                                            'data-placement': 'top',
+                                            'title': 'Rename'
+                                        }
+                                    )
+                                    .append(
+                                        $('<i />')
+                                            .addClass('material-icons')
+                                            .text('create')
+                                    )
+                            )
+
                     )
             )
 
@@ -477,15 +510,17 @@ const pasteContent = () => {
 
 }
 
-const uploadFiles = () => {
+const uploadFiles = (files = null) => {
 
-    const currentDirectory = $('#current_directory').data('path');
+    if (files === null) {
 
-    const form = $('#upload_files_frm');
+        const form = $('#upload_files_frm');
+
+        const files = $('input[type="file"]', form)[0].files;
+
+    }
 
     let requestData = new FormData();
-
-    const files = $('input[type="file"]', form)[0].files;
 
     if (files.length === 0) {
 
@@ -500,6 +535,8 @@ const uploadFiles = () => {
         requestData.append('files_list[]', files[i]);
 
     }
+
+    const currentDirectory = $('#current_directory').data('path');
 
     requestData.append('path', currentDirectory);
 
@@ -1052,6 +1089,43 @@ $(document).ready(function () {
 
 
     });
+
+
+    /**
+     * Drug & drop files
+     */
+    $('.content').on('dragenter', function(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        $('body')
+            .append(
+                $('<div />')
+                    .addClass('drop-container process-container')
+                    .html('Drop files to start upload')
+            )
+
+    });
+
+    $(document).on('dragenter dragover dragleave', '.drop-container', function(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+    });
+
+    $(document).on('drop', '.drop-container', function(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        $('.drop-container').remove();
+
+        uploadFiles(event.originalEvent.dataTransfer.files)
+
+    });
+
 
     /**
      * Start application
