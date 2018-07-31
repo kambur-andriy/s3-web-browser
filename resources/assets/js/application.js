@@ -241,7 +241,7 @@ const showFiles = filesList => {
 
     });
 
-    $('.tooltip-btn').each(function() {
+    $('.tooltip-btn').each(function () {
         $(this).tooltip();
     });
 
@@ -538,19 +538,49 @@ const sortByName = list => {
 
     const sortOrder = $('#sort_content').hasClass('asc') ? -1 : 1;
 
-
     list.sort(
         (fileSource, fileDest) => {
 
-            if (fileSource.name < fileDest.name) {
-                return sortOrder;
-            }
-            if (fileSource.name > fileDest.name) {
-                return sortOrder;
+            const digSource = parseInt(fileSource.name);
+
+            let sourceFileName = fileSource.name;
+
+            if (!isNaN(digSource)) {
+
+                sourceFileName = digSource;
+
             }
 
+            const digDest = parseInt(fileDest.name);
+
+            let destFileName = fileDest.name;
+
+            if (!isNaN(digDest)) {
+
+                destFileName = digDest;
+
+            }
+
+            if ((typeof sourceFileName) != (typeof destFileName)) {
+
+                return sortOrder;
+
+            }
+
+            if (sourceFileName < destFileName) {
+
+                return sortOrder;
+
+            }
+
+            if (sourceFileName > destFileName) {
+
+                return -sortOrder;
+
+            }
 
             return 0;
+
         }
     );
 
@@ -957,7 +987,7 @@ $(document).ready(function () {
 
     });
 
-    $('#sort_content').on('click', function(event) {
+    $('#sort_content').on('click', function (event) {
 
         event.preventDefault();
 
@@ -969,7 +999,7 @@ $(document).ready(function () {
 
     });
 
-    $('#move_back').on('click', function(event) {
+    $('#move_back').on('click', function (event) {
 
         event.preventDefault();
 
@@ -996,7 +1026,7 @@ $(document).ready(function () {
 
     });
 
-    $('#move_forward').on('click', function(event) {
+    $('#move_forward').on('click', function (event) {
 
         event.preventDefault();
 
