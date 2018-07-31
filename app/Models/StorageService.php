@@ -141,7 +141,7 @@ class StorageService
 		}
 
 	}
-	
+
 	/**
 	 * Download file
 	 *

@@ -516,7 +516,7 @@ const uploadFiles = (files = null) => {
 
         const form = $('#upload_files_frm');
 
-        const files = $('input[type="file"]', form)[0].files;
+        files = $('input[type="file"]', form)[0].files;
 
     }
 
