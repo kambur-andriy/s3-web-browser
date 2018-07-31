@@ -96,45 +96,6 @@ class StorageService
 	}
 
 	/**
-	 * Rename file or directory
-	 *
-	 * @param ContentRename $request
-	 *
-	 * @return void
-	 * @throws StorageException
-	 * @throws \League\Flysystem\FileNotFoundException
-	 */
-	public function rename(ContentRename $request)
-	{
-
-		$sourcePath = $request->path;
-		$newName = $request->name;
-
-		$this->checkExists($sourcePath);
-
-		$info = pathinfo($sourcePath);
-
-		$destinationPath = $info['dirname'] . '/' . $newName;
-
-		$this->checkUnique($destinationPath);
-
-		try {
-
-			if ($this->isFile($sourcePath)) {
-
-				$this->storage->move($sourcePath, $destinationPath);
-
-			}
-
-		} catch(StorageException $e) {
-
-			throw new StorageException('Can not rename file or directory');
-
-		}
-
-	}
-
-	/**
 	 * Download file
 	 *
 	 * @param FileDownload $request
@@ -154,6 +115,33 @@ class StorageService
 	}
 
 	/**
+	 * Upload files
+	 *
+	 * @param FileUpload $request
+	 *
+	 * @return void
+	 * @throws StorageException
+	 */
+	public function upload(FileUpload $request)
+	{
+
+		$filesList = $request->files_list;
+
+		$path = $request->path;
+
+		if (count($filesList) === 0) {
+			throw new StorageException('Files list is empty.');
+		}
+
+		foreach ($filesList as $file) {
+
+			$this->uploadFile($file, $path);
+
+		}
+
+	}
+
+	/**
 	 * Create directory
 	 *
 	 * @param DirectoryMake $request
@@ -165,7 +153,6 @@ class StorageService
 	{
 
 		$parentDirectory = $request->path;
-
 		$directoryName = $request->name;
 
 		$sourcePath = $parentDirectory . '/' . $directoryName;
@@ -177,34 +164,47 @@ class StorageService
 	}
 
 	/**
-	 * Remove content
+	 * Rename file or directory
 	 *
-	 * @param ContentRemove $request
+	 * @param ContentRename $request
 	 *
 	 * @return void
 	 * @throws StorageException
 	 * @throws \League\Flysystem\FileNotFoundException
 	 */
-	public function remove(ContentRemove $request)
+	public function rename(ContentRename $request)
 	{
 
-		$pathList = $request->path_list;
+		$sourcePath = $request->path;
+		$newName = $request->name;
 
-		foreach ($pathList as $path) {
+		$info = pathinfo($sourcePath);
 
-			if ($this->isFile($path)) {
+		$destinationPath = $info['dirname'] . '/' . $newName;
 
-				$this->removeFile($path);
+		$this->checkUnique($destinationPath);
 
-			} else if ($this->isDirectory($path)) {
+		if ($this->isFile($sourcePath)) {
 
-				$this->removeDirectory($path);
+			$this->storage->move($sourcePath, $destinationPath);
 
-			} else {
+		} elseif ($this->isDirectory($sourcePath)) {
 
-				throw new StorageException('Can not remove files or directories');
+			$this->createDirectory($destinationPath);
 
+			$subDirectories = $this->directories($sourcePath);
+
+			foreach ($subDirectories as $subDirectory) {
+				$this->moveDirectory($subDirectory['path'], $destinationPath);
 			}
+
+			$files = $this->files($sourcePath);
+
+			foreach ($files as $file) {
+				$this->moveFile($file['path'], $destinationPath);
+			}
+
+			$this->removeDirectory($sourcePath);
 
 		}
 
@@ -246,31 +246,39 @@ class StorageService
 	}
 
 	/**
-	 * Upload files
+	 * Remove content
 	 *
-	 * @param FileUpload $request
+	 * @param ContentRemove $request
 	 *
 	 * @return void
 	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
 	 */
-	public function upload(FileUpload $request)
+	public function remove(ContentRemove $request)
 	{
 
-		$filesList = $request->files_list;
+		$pathList = $request->path_list;
 
-		$path = $request->path;
+		foreach ($pathList as $path) {
 
-		if (count($filesList) === 0) {
-			throw new StorageException('Files list is empty.');
-		}
+			if ($this->isFile($path)) {
 
-		foreach ($filesList as $file) {
+				$this->removeFile($path);
 
-			$this->uploadFile($file, $path);
+			} elseif ($this->isDirectory($path)) {
+
+				$this->removeDirectory($path);
+
+			} else {
+
+				throw new StorageException('Can not remove files or directories');
+
+			}
 
 		}
 
 	}
+
 
 
 	/**
@@ -308,6 +316,7 @@ class StorageService
 		}
 
 		return $size;
+
 	}
 
 	/**
@@ -457,6 +466,7 @@ class StorageService
 	 */
 	private function quickNavigation($directory)
 	{
+
 		$directoriesList = [];
 
 		if ($directory === '.') {
@@ -868,7 +878,7 @@ class StorageService
 
 			$this->copyFile($sourcePath, $destinationPath);
 
-		} else if ($this->isDirectory($sourcePath)) {
+		} elseif ($this->isDirectory($sourcePath)) {
 
 			$this->copyDirectory($sourcePath, $destinationPath);
 
@@ -896,7 +906,7 @@ class StorageService
 
 			$this->moveFile($sourcePath, $destinationPath);
 
-		} else if ($this->isDirectory($sourcePath)) {
+		} elseif ($this->isDirectory($sourcePath)) {
 
 			$this->moveDirectory($sourcePath, $destinationPath);
 

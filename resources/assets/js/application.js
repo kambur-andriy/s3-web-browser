@@ -112,7 +112,27 @@ const showDirectories = directoriesList => {
                     .append(
                         $('<td />')
                             .addClass('td-actions text-right')
-                            .html('')
+                            .append(
+                                $('<button />')
+                                    .addClass('btn btn-info btn-sm ml-2 tooltip-btn info-btn')
+                                    .attr('type', 'button')
+                                    .append(
+                                        $('<i />')
+                                            .addClass('material-icons')
+                                            .text('info')
+                                    )
+                            )
+                            .append(
+                                $('<button />')
+                                    .addClass('btn btn-warning btn-sm ml-2 tooltip-btn rename-btn')
+                                    .attr('type', 'button')
+                                    .append(
+                                        $('<i />')
+                                            .addClass('material-icons')
+                                            .text('question_answer')
+                                    )
+                            )
+
                     )
             )
 
@@ -912,8 +932,4 @@ $(document).ready(function () {
      */
     getContent();
 
-
-    // $(document).on('click', '.download-btn', function() {
-    //     alert('Yo');
-    // });
 });
