@@ -419,6 +419,7 @@ class StorageService
 			$filesList[] = [
 				'name' => $fileInfo['basename'],
 				'path' => $s3File,
+				'url' => $this->storage->url($s3File)
 			];
 
 		}
@@ -448,6 +449,7 @@ class StorageService
 			$filesList[] = [
 				'name' => $fileInfo['basename'],
 				'path' => $s3File,
+				'url' => $this->storage->url($s3File)
 			];
 
 		}

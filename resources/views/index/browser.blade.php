@@ -234,7 +234,7 @@
 
 											</th>
 
-											<th class="text-warning font-weight-bold">Type</th>
+											<th class="text-warning font-weight-bold">View</th>
 											<th class="text-warning font-weight-bold">
 												Name
 												<i id="sort_content" class="material-icons float-right text-danger asc">sort_by_alpha</i>

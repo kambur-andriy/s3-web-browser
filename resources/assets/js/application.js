@@ -149,7 +149,6 @@ const showDirectories = directoriesList => {
                                             .text('create')
                                     )
                             )
-
                     )
             )
 
@@ -198,9 +197,9 @@ const showFiles = filesList => {
                         $('<td />')
                             .addClass('td-type text-left')
                             .append(
-                                $('<i />')
-                                    .addClass('material-icons text-gray text-center')
-                                    .text('attachment')
+                                $('<img />')
+                                    .addClass('file-preview')
+                                    .attr('src', file.url)
                             )
                     )
                     .append(
@@ -1090,11 +1089,68 @@ $(document).ready(function () {
 
     });
 
+    $(document).on('click', '.file-preview', function (event) {
+
+        event.preventDefault();
+
+        const modal = $('<div />')
+            .addClass('modal fade')
+            .attr(
+                {
+                    'role': 'dialog',
+                    'tabindex': '-1'
+                }
+            )
+            .append(
+                $('<div />')
+                    .addClass('modal-dialog modal-dialog-centered')
+                    .attr('role', 'document')
+                    .append(
+                        $('<div />')
+                            .addClass('modal-content')
+                            .append(
+                                $('<div />')
+                                    .addClass('modal-header')
+                                    .append(
+                                        $('<h5 />')
+                                            .addClass('modal-title')
+                                            .text('File preview')
+                                    )
+                                    .append(
+                                        $('<button />')
+                                            .addClass('close')
+                                            .attr(
+                                                {
+                                                    'type': 'button',
+                                                    'data-dismiss': 'modal',
+                                                }
+                                            )
+                                            .append(
+                                                $('<span />')
+                                                    .html('&times;')
+                                            )
+                                    )
+                            )
+                            .append(
+                                $('<div />')
+                                    .addClass('modal-body')
+                                    .append(
+                                        $('<img />')
+                                            .attr('src', $(this).attr('src'))
+                                            .attr('width', '100%')
+                                    )
+                            )
+                    )
+            )
+
+        modal.modal();
+
+    });
 
     /**
      * Drug & drop files
      */
-    $('.content').on('dragenter', function(event) {
+    $('.content').on('dragenter', function (event) {
 
         event.preventDefault();
         event.stopPropagation();
@@ -1108,14 +1164,14 @@ $(document).ready(function () {
 
     });
 
-    $(document).on('dragenter dragover dragleave', '.drop-container', function(event) {
+    $(document).on('dragenter dragover dragleave', '.drop-container', function (event) {
 
         event.preventDefault();
         event.stopPropagation();
 
     });
 
-    $(document).on('drop', '.drop-container', function(event) {
+    $(document).on('drop', '.drop-container', function (event) {
 
         event.preventDefault();
         event.stopPropagation();

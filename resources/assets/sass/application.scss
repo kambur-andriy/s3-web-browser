@@ -53,7 +53,9 @@
 .tooltip {
 
     .arrow {
+
         display: none!important;
+
     }
 
 }
@@ -63,5 +65,13 @@
 
     border: 3px dashed #9c27b0 !important;
     color: #9c27b0;
+
+}
+
+.file-preview {
+
+    height: 35px;
+
+    cursor: pointer;
 
 }
