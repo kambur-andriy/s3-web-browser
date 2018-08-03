@@ -132,7 +132,6 @@ const showDirectories = directoriesList => {
                                             .text('question_answer')
                                     )
                             )
-
                     )
             )
 
@@ -490,15 +489,17 @@ const pasteContent = () => {
 
 }
 
-const uploadFiles = () => {
+const uploadFiles = (files = null) => {
 
-    const currentDirectory = $('#current_directory').data('path');
+    if (files === null) {
 
-    const form = $('#upload_files_frm');
+        const form = $('#upload_files_frm');
+
+        files = $('input[type="file"]', form)[0].files;
+
+    }
 
     let requestData = new FormData();
-
-    const files = $('input[type="file"]', form)[0].files;
 
     if (files.length === 0) {
 
@@ -513,6 +514,8 @@ const uploadFiles = () => {
         requestData.append('files_list[]', files[i]);
 
     }
+
+    const currentDirectory = $('#current_directory').data('path');
 
     requestData.append('path', currentDirectory);
 
@@ -885,11 +888,15 @@ $(document).ready(function () {
                 $('<div />')
                     .addClass('form-group')
                     .append(
-                        $('<label />')
-                            .addClass('bmd-label-floating')
-                            .attr('for', 'local_file')
-                            .text('Select file')
+                        $('<input />')
+                            .addClass('form-control-plaintext')
+                            .attr('type', 'text')
+                            .val('Select files for uploading or drag them directly to the files list')
                     )
+            )
+            .append(
+                $('<div />')
+                    .addClass('form-group')
                     .append(
                         $('<input />')
                             .addClass('form-control')
@@ -897,6 +904,7 @@ $(document).ready(function () {
                                 {
                                     type: 'text',
                                     name: 'local_file',
+                                    placeholder: 'Click to select files',
                                     autocomplete: 'off'
                                 }
                             )
@@ -924,6 +932,41 @@ $(document).ready(function () {
 
                 }
             )
+
+    });
+
+    /**
+     * Drug & drop files
+     */
+    $('.content').on('dragenter', function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        $('body')
+            .append(
+                $('<div />')
+                    .addClass('drop-container process-container')
+                    .html('Drop files to start upload')
+            )
+
+    });
+
+    $(document).on('dragenter dragover dragleave', '.drop-container', function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+    });
+
+    $(document).on('drop', '.drop-container', function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        $('.drop-container').remove();
+
+        uploadFiles(event.originalEvent.dataTransfer.files)
 
     });
 
