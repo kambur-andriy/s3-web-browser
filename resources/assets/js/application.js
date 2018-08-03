@@ -199,7 +199,12 @@ const showFiles = filesList => {
                             .append(
                                 $('<img />')
                                     .addClass('file-preview')
-                                    .attr('src', file.url)
+                                    .attr(
+                                        {
+                                            'src': file.url,
+                                            'alt': file.name
+                                        }
+                                    )
                             )
                     )
                     .append(
@@ -640,6 +645,86 @@ const navigate = path => {
     sessionStorage.setItem('navigation_position', position);
 
 }
+
+const showPreview = target => {
+
+    const fileUrl = target.attr('src');
+    const fileName = target.attr('alt');
+
+    if ($('.preview-container').length !== 0) {
+
+        $('.preview-container .file-info').html(fileName);
+        $('.preview-container .preview-img').data('img_src', fileUrl).css('background-image', 'url(' + fileUrl + ')');
+
+        return;
+    }
+
+    $('body')
+        .append(
+            $('<div />')
+                .addClass('preview-container')
+                .append(
+                    $('<div />')
+                        .addClass('preview-nfo mb-2')
+                        .append(
+                            $('<span />')
+                                .addClass('file-info')
+                                .html(fileName)
+                        )
+                        .append(
+                            $('<span />')
+                                .addClass('close-preview')
+                                .html('&times;')
+                                .on('click', function(event) {
+                                    event.preventDefault();
+                                    $('.preview-container').remove()
+                                })
+                        )
+                )
+                .append(
+                    $('<div />')
+                        .addClass('preview-img')
+                        .css('background-image', 'url(' + fileUrl + ')')
+                        .data('img_src', fileUrl)
+                )
+                .append(
+                    $('<div />')
+                        .addClass('preview-actions mt-2 mb-2')
+                        .append(
+                            $('<button />')
+                                .addClass('btn btn-primary btn-round btn-just-icon')
+                                .attr(
+                                    {
+                                        id: 'preview-prev',
+                                        type: 'button',
+                                    }
+                                )
+                                .append(
+                                    $('<i />')
+                                        .addClass('material-icons')
+                                        .html('keyboard_arrow_left')
+                                )
+                        )
+                        .append(
+                            $('<button />')
+                                .addClass('btn btn-primary btn-round btn-just-icon ml-4')
+                                .attr(
+                                    {
+                                        id: 'preview-next',
+                                        type: 'button',
+                                    }
+                                )
+                                .append(
+                                    $('<i />')
+                                        .addClass('material-icons')
+                                        .html('keyboard_arrow_right')
+                                )
+                        )
+                )
+        )
+
+}
+
 
 /**
  * Document ready
@@ -1089,61 +1174,68 @@ $(document).ready(function () {
 
     });
 
+    /**
+     * File preview
+     */
     $(document).on('click', '.file-preview', function (event) {
 
         event.preventDefault();
 
-        const modal = $('<div />')
-            .addClass('modal fade')
-            .attr(
-                {
-                    'role': 'dialog',
-                    'tabindex': '-1'
-                }
-            )
-            .append(
-                $('<div />')
-                    .addClass('modal-dialog modal-dialog-centered')
-                    .attr('role', 'document')
-                    .append(
-                        $('<div />')
-                            .addClass('modal-content')
-                            .append(
-                                $('<div />')
-                                    .addClass('modal-header')
-                                    .append(
-                                        $('<h5 />')
-                                            .addClass('modal-title')
-                                            .text('File preview')
-                                    )
-                                    .append(
-                                        $('<button />')
-                                            .addClass('close')
-                                            .attr(
-                                                {
-                                                    'type': 'button',
-                                                    'data-dismiss': 'modal',
-                                                }
-                                            )
-                                            .append(
-                                                $('<span />')
-                                                    .html('&times;')
-                                            )
-                                    )
-                            )
-                            .append(
-                                $('<div />')
-                                    .addClass('modal-body')
-                                    .append(
-                                        $('<img />')
-                                            .attr('src', $(this).attr('src'))
-                                            .attr('width', '100%')
-                                    )
-                            )
-                    )
-            )
+        showPreview($(this));
 
-        modal.modal();
+    });
+
+    $(document).on('click', '#preview-next', function (event) {
+
+        event.preventDefault();
+
+        const currentPreviewImg = $('.preview-img').data('img_src');
+
+        const currentFile = $('#content_list').find('img[src="' + currentPreviewImg + '"]')
+        let nextTarget = currentFile.parents('tr').next('tr').find('.file-preview');
+
+        if (nextTarget.length === 0) {
+            nextTarget = $('#content_list .file-preview:first-child');
+        }
+
+        showPreview(nextTarget);
+
+    });
+
+    $(document).on('click', '#preview-prev', function (event) {
+
+        event.preventDefault();
+
+        const currentPreviewImg = $('.preview-img').data('img_src');
+
+        const currentFile = $('#content_list').find('img[src="' + currentPreviewImg + '"]')
+        let nextTarget = currentFile.parents('tr').prev('tr').find('.file-preview');
+
+        if (nextTarget.length === 0) {
+            nextTarget = $('#content_list .file-preview').last();
+        }
+
+        showPreview(nextTarget);
+
+    });
+
+    $(document).on('keydown', function (event) {
+
+        switch (event.keyCode) {
+
+            case 27:
+                $('.close-preview').trigger('click')
+                break;
+
+            case 39:
+                $('#preview-next').trigger('click')
+                break;
+
+            case 37:
+                $('#preview-prev').trigger('click')
+                break;
+
+        }
 
     });
 
