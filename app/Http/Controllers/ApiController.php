@@ -57,6 +57,8 @@ class ApiController extends Controller
 	 * @param ContentInfo $request
 	 *
 	 * @return JSON
+	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
 	 */
 	public function info(ContentInfo $request)
 	{
@@ -76,6 +78,8 @@ class ApiController extends Controller
 	 *
 	 * @return JSON
 	 * @throws StorageException
+	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
 	 */
 	public function rename(ContentRename $request)
 	{
@@ -129,6 +133,7 @@ class ApiController extends Controller
 	 *
 	 * @return JSON
 	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
 	 */
 	public function remove(ContentRemove $request)
 	{
@@ -148,6 +153,7 @@ class ApiController extends Controller
 	 *
 	 * @return JSON
 	 * @throws StorageException
+	 * @throws \League\Flysystem\FileNotFoundException
 	 */
 	public function paste(ContentPaste $request)
 	{

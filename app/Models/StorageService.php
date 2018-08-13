@@ -419,7 +419,10 @@ class StorageService
 			$filesList[] = [
 				'name' => $fileInfo['basename'],
 				'path' => $s3File,
-				'url' => $this->storage->url($s3File)
+				'url' => $this->storage->temporaryUrl(
+					$s3File,
+					now()->addMinutes(30)
+				)
 			];
 
 		}
@@ -449,7 +452,10 @@ class StorageService
 			$filesList[] = [
 				'name' => $fileInfo['basename'],
 				'path' => $s3File,
-				'url' => $this->storage->url($s3File)
+				'url' => $this->storage->temporaryUrl(
+					$s3File,
+					now()->addMinutes(5)
+				)
 			];
 
 		}
