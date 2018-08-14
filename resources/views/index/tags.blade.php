@@ -22,7 +22,7 @@
 	<script src="/js/theme/material-dashboard.min.js?v=2.1.0" type="text/javascript"></script>
 
 	<!--  User scripts    -->
-	<script src="/js/browser.js" type="text/javascript"></script>
+	<script src="/js/tags.js" type="text/javascript"></script>
 
 
 </head>
@@ -33,75 +33,13 @@
 	<div class="sidebar" data-color="purple" data-background-color="white" data-image="/images/sidebar.jpg">
 
 		<div class="logo">
-			<a href="" class="simple-text logo-normal">Amazon S3</a>
+			<a href="" class="simple-text logo-normal">Tags Categories</a>
 		</div>
 
 		<div class="sidebar-wrapper">
 
 			<ul class="nav">
 
-				<li class="nav-item">
-					<div class="nav-link font-weight-bold">
-						<i class="material-icons">folder</i>
-						<p>Directory</p>
-					</div>
-				</li>
-
-				<li class="nav-item">
-					<a id="make_directory_btn" class="nav-link" href="">
-						<i class="material-icons">add</i>
-						<p>Create</p>
-					</a>
-				</li>
-
-				<li class="nav-item">
-					<div class="nav-link font-weight-bold">
-						<i class="material-icons">attachment</i>
-						<p>File</p>
-					</div>
-				</li>
-
-				<li class="nav-item">
-					<a id="upload_file_btn" class="nav-link" href="">
-						<i class="material-icons">publish</i>
-						<p>Upload</p>
-					</a>
-				</li>
-
-				<li class="nav-item">
-					<div class="nav-link font-weight-bold">
-						<i class="material-icons">cloud</i>
-						<p>Content</p>
-					</div>
-				</li>
-
-				<li class="nav-item">
-					<a id="copy_btn" class="nav-link" href="">
-						<i class="material-icons">done</i>
-						<p>Copy</p>
-					</a>
-				</li>
-
-				<li class="nav-item">
-					<a id="cut_btn" class="nav-link" href="">
-						<i class="material-icons">done_all</i>
-						<p>Cut</p>
-					</a>
-				</li>
-
-				<li class="nav-item">
-					<a id="paste_btn" class="nav-link" href="">
-						<i class="material-icons">all_out</i>
-						<p>Paste</p>
-					</a>
-				</li>
-
-				<li class="nav-item">
-					<a id="remove_btn" class="nav-link" href="">
-						<i class="material-icons">delete</i>
-						<p>Remove</p>
-					</a>
-				</li>
 
 			</ul>
 
