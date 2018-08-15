@@ -33,13 +33,82 @@
 	<div class="sidebar" data-color="purple" data-background-color="white" data-image="/images/sidebar.jpg">
 
 		<div class="logo">
-			<a href="" class="simple-text logo-normal">Tags Categories</a>
+			<a href="" class="simple-text logo-normal">Tags Manager</a>
 		</div>
 
 		<div class="sidebar-wrapper">
 
 			<ul class="nav">
 
+				<li class="nav-item">
+					<div class="nav-link font-weight-bold">
+						<i class="material-icons">date_range</i>
+						<p>Tags Categories</p>
+					</div>
+				</li>
+
+				<li class="nav-item row">
+
+					<div class="col-10 offset-1 mt-4">
+
+						<form id="tag_category_frm" novalidate>
+
+							<div class="form-group">
+								<label for="name" class="bmd-label-floating">Category name</label>
+								<input type="text" class="form-control" name="name" autocomplete="off"/>
+							</div>
+
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary w-100">Create Category</button>
+							</div>
+
+						</form>
+
+					</div>
+
+				</li>
+
+				<li class="nav-item">
+					<div class="nav-link font-weight-bold">
+						<i class="material-icons">dashboard</i>
+						<p>Tags</p>
+					</div>
+				</li>
+
+				<li class="nav-item row">
+
+					<div class="col-10 offset-1">
+
+						<form id="tag_frm" novalidate>
+
+							<div class="form-group">
+								<label for="name" class="bmd-label-floating">Tag name</label>
+								<input type="text" class="form-control" name="name" autocomplete="off"/>
+							</div>
+
+							<div class="form-group">
+								<label for="category" class="bmd-label-floating">Tag category</label>
+								<select id="category" class="form-control" name="category">
+									<option value="0" selected>Select category</option>
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label for="parent_tag" class="bmd-label-floating">Parent tag</label>
+								<select id="parent_tag" class="form-control" name="parent_tag">
+									<option value="0">Without parents</option>
+								</select>
+							</div>
+
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary w-100">Create Tag</button>
+							</div>
+
+						</form>
+
+					</div>
+
+				</li>
 
 			</ul>
 
@@ -53,17 +122,6 @@
 
 			<div class="container-fluid">
 
-				<div class="navbar-wrapper">
-
-					<button id="move_back" type="button" class="btn btn-round btn-just-icon">
-						<i class="material-icons">arrow_back</i>
-					</button>
-
-					<button id="move_forward" type="button" class="btn btn-round btn-just-icon ml-2">
-						<i class="material-icons">arrow_forward</i>
-					</button>
-
-				</div>
 
 				<button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false"
 				        aria-label="Toggle navigation">
@@ -113,77 +171,60 @@
 
 						<div class="card">
 
+							<div class="card-header card-header-warning">
+								<h4 class="card-title">Tags Categories List</h4>
+							</div>
+
 							<div class="card-body">
 
 								<div class="table-responsive">
 
-									<table id="content_list" class="table table-hover">
+									<table id="categories_list" class="table table-hover">
 
 										<thead>
-
 										<tr>
-
-											<th colspan="6">
-
-												<div class="navbar-wrapper">
-
-													<nav id="quick_navigation" aria-label="breadcrumb">
-														<ol class="breadcrumb">
-														</ol>
-													</nav>
-
-												</div>
-
-											</th>
-
+											<th class="text-warning">Name</th>
+											<th class="text-warning text-right">Actions</th>
 										</tr>
+										</thead>
 
+										<tbody></tbody>
+
+									</table>
+
+								</div>
+
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<div class="row">
+
+					<div class="col-12">
+
+						<div class="card">
+
+							<div class="card-header card-header-info">
+								<h4 class="card-title">Tags List</h4>
+							</div>
+
+							<div class="card-body">
+
+								<div class="table-responsive">
+
+									<table id="tags_list" class="table table-hover">
+
+										<thead>
 										<tr>
-
-											<th id="current_directory" colspan="6">
-
-												<div class="float-left">
-													Current directory: <strong id="directory_name"></strong>
-												</div>
-
-												<div class="float-right">
-													Directories: <strong id="dir_count"></strong>
-													Files: <strong id="files_count"></strong>
-												</div>
-
-											</th>
-
+											<th class="text-info">Name</th>
+											<th class="text-info">Category</th>
+											<th class="text-info">Parent</th>
+											<th class="text-info text-right">Actions</th>
 										</tr>
-
-										<tr>
-
-											<th class="td-check">
-
-												<div class="form-check">
-
-													<label class="form-check-label">
-														<input id="select_all_files" class="form-check-input" type="checkbox">
-														<span class="form-check-sign">
-				                                    <span class="check"></span>
-												</span>
-													</label>
-
-												</div>
-
-											</th>
-
-											<th class="text-warning font-weight-bold">View</th>
-											<th class="text-warning font-weight-bold">
-												Name
-												<i id="sort_content" class="material-icons float-right text-danger asc">sort_by_alpha</i>
-											</th>
-											<th class="text-warning text-center font-weight-bold">Size</th>
-											<th class="text-warning text-center font-weight-bold">Modified</th>
-											<th class="text-warning text-center font-weight-bold">Actions</th>
-
-
-										</tr>
-
 										</thead>
 
 										<tbody></tbody>

@@ -1,5 +1,5 @@
 <?php
 
 Route::view('/', 'index.browser');
-Route::view('/tags-categories', 'index.tags-categories');
-Route::view('/tags', 'index.tags');
+Route::view('/tags-manager', 'index.tags-manager');
+Route::view('/images-manager', 'index.images-manager');

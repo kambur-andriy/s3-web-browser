@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Exceptions\ImagesException;
 use App\Exceptions\StorageException;
 use App\Exceptions\TagsException;
 use App\Http\Requests\ContentInfo;
@@ -10,6 +11,7 @@ use App\Http\Requests\ContentList;
 use App\Http\Requests\ContentPaste;
 use App\Http\Requests\ContentRemove;
 use App\Http\Requests\ContentRename;
+use App\Http\Requests\CreateImage;
 use App\Http\Requests\CreateTag;
 use App\Http\Requests\CreateTagsCategory;
 use App\Http\Requests\DirectoryMake;
@@ -19,6 +21,7 @@ use App\Http\Requests\FileDownload;
 use App\Http\Requests\FileUpload;
 use App\Http\Requests\RemoveTag;
 use App\Http\Requests\RemoveTagsCategory;
+use App\Models\ImagesService;
 use App\Models\StorageService;
 use App\Models\TagsService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -29,17 +32,19 @@ class ApiController extends Controller
 
 	private $storageService;
 	private $tagsService;
+	private $imagesService;
 
 	/**
 	 * ApiController constructor.
 	 *
 	 * @param StorageService $storageService
 	 */
-	public function __construct(StorageService $storageService, TagsService $tagsService)
+	public function __construct(StorageService $storageService, TagsService $tagsService, ImagesService $imagesService)
 	{
 
 		$this->storageService = $storageService;
 		$this->tagsService = $tagsService;
+		$this->imagesService = $imagesService;
 
 	}
 
@@ -330,6 +335,29 @@ class ApiController extends Controller
 				'tags_categories_list' => $categoriesList,
 				'tags_list' => $tagsList
 			]
+		);
+
+	}
+
+
+
+
+
+	/**
+	 * Create image
+	 *
+	 * @param CreateImage $request
+	 *
+	 * @return JSON
+	 * @throws ImagesException
+	 */
+	public function createImage(CreateImage $request)
+	{
+
+		$image = $this->imagesService->createImage($request);
+
+		return response()->json(
+			$image
 		);
 
 	}

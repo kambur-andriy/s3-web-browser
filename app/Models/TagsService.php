@@ -20,7 +20,7 @@ class TagsService
 	/**
 	 * @var Tag
 	 */
-	private $tagsModel;
+	private $tagModel;
 
 	/**
 	 * @var TagsCategory
@@ -30,13 +30,13 @@ class TagsService
 	/**
 	 * TagsService constructor.
 	 *
-	 * @param Tag $tagsModel
+	 * @param Tag $tagModel
 	 * @param TagsCategory $tagsCategoryModel
 	 */
-	public function __construct(Tag $tagsModel, TagsCategory $tagsCategoryModel)
+	public function __construct(Tag $tagModel, TagsCategory $tagsCategoryModel)
 	{
 
-		$this->tagsModel = $tagsModel;
+		$this->tagModel = $tagModel;
 		$this->tagsCategoryModel = $tagsCategoryModel;
 
 	}
@@ -152,7 +152,7 @@ class TagsService
 	public function createTag(CreateTag $request)
 	{
 
-		$tag = $this->tagsModel->create(
+		$tag = $this->tagModel->create(
 			[
 				'name' => $request->name,
 				'category_id' => $request->category,
@@ -221,7 +221,7 @@ class TagsService
 	public function findTag($tagId)
 	{
 
-		$tag = $this->tagsModel->where('id', $tagId)->with('category', 'parentTag')->first();
+		$tag = $this->tagModel->where('id', $tagId)->with('category', 'parentTag')->first();
 
 		if (is_null($tag)) {
 			throw new TagsException('Tag not found');
@@ -239,7 +239,7 @@ class TagsService
 	public function tagsList()
 	{
 
-		return $this->tagsModel->with('category', 'parentTag')->get();
+		return $this->tagModel->with('category', 'parentTag')->get();
 
 	}
 

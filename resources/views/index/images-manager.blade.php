@@ -22,7 +22,7 @@
 	<script src="/js/theme/material-dashboard.min.js?v=2.1.0" type="text/javascript"></script>
 
 	<!--  User scripts    -->
-	<script src="/js/tags.js" type="text/javascript"></script>
+	<script src="/js/images.js" type="text/javascript"></script>
 
 
 </head>
@@ -33,75 +33,26 @@
 	<div class="sidebar" data-color="purple" data-background-color="white" data-image="/images/sidebar.jpg">
 
 		<div class="logo">
-			<a href="" class="simple-text logo-normal">Tags</a>
+			<a href="" class="simple-text logo-normal">Images Manager</a>
 		</div>
 
 		<div class="sidebar-wrapper">
 
 			<ul class="nav">
 
-				<li class="nav-item">
-					<div class="nav-link font-weight-bold">
-						<i class="material-icons">date_range</i>
-						<p>Tags Categories</p>
-					</div>
-				</li>
-
 				<li class="nav-item row">
 
 					<div class="col-10 offset-1 mt-4">
 
-						<form id="tag_category_frm" novalidate>
+						<form id="image_frm" novalidate>
 
 							<div class="form-group">
-								<label for="name" class="bmd-label-floating">Category name</label>
-								<input type="text" class="form-control" name="name" autocomplete="off"/>
+								<label for="name" class="bmd-label-floating">Media File</label>
+								<input type="text" class="form-control-plaintext" name="path" placeholder="Click to open media library ..." />
 							</div>
 
 							<div class="form-group">
-								<button type="submit" class="btn btn-primary w-100">Create Category</button>
-							</div>
-
-						</form>
-
-					</div>
-
-				</li>
-
-				<li class="nav-item">
-					<div class="nav-link font-weight-bold">
-						<i class="material-icons">dashboard</i>
-						<p>Tags</p>
-					</div>
-				</li>
-
-				<li class="nav-item row">
-
-					<div class="col-10 offset-1">
-
-						<form id="tag_frm" novalidate>
-
-							<div class="form-group">
-								<label for="name" class="bmd-label-floating">Tag name</label>
-								<input type="text" class="form-control" name="name" autocomplete="off"/>
-							</div>
-
-							<div class="form-group">
-								<label for="category" class="bmd-label-floating">Tag category</label>
-								<select id="category" class="form-control" name="category">
-									<option value="0" selected>Select category</option>
-								</select>
-							</div>
-
-							<div class="form-group">
-								<label for="parent_tag" class="bmd-label-floating">Parent tag</label>
-								<select id="parent_tag" class="form-control" name="parent_tag">
-									<option value="0">Without parents</option>
-								</select>
-							</div>
-
-							<div class="form-group">
-								<button type="submit" class="btn btn-primary w-100">Create Tag</button>
+								<button type="submit" class="btn btn-primary w-100">Create Image</button>
 							</div>
 
 						</form>
@@ -165,27 +116,67 @@
 
 			<div class="container-fluid">
 
-				<div class="row">
+				<div id="media_library" class="row d-none">
 
 					<div class="col-12">
 
 						<div class="card">
 
-							<div class="card-body">
 
-								<div class="card-header card-header-warning">
-									<h4 class="card-title">Tags Categories List</h4>
-								</div>
+							<div class="card-header card-header-warning">
+
+								<h4 class="card-title">
+									Media library
+
+									<button type="button" class="close text-white" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</h4>
+
+							</div>
+
+							<div class="card-body">
 
 								<div class="table-responsive">
 
-									<table id="categories_list" class="table table-hover">
+									<table id="content_list" class="table table-hover">
 
 										<thead>
+
 										<tr>
-											<th class="text-warning">Name</th>
-											<th class="text-warning text-right">Actions</th>
+
+											<th colspan="2">
+
+												<div class="navbar-wrapper">
+
+													<nav id="quick_navigation" aria-label="breadcrumb">
+														<ol class="breadcrumb">
+														</ol>
+													</nav>
+
+												</div>
+
+											</th>
+
 										</tr>
+
+										<tr>
+
+											<th id="current_directory" colspan="2">
+
+												<div class="float-left">
+													Current directory: <strong id="directory_name"></strong>
+												</div>
+
+												<div class="float-right">
+													Directories: <strong id="dir_count"></strong>
+													Files: <strong id="files_count"></strong>
+												</div>
+
+											</th>
+
+										</tr>
+
 										</thead>
 
 										<tbody></tbody>
@@ -198,31 +189,31 @@
 
 						</div>
 
-					</div>
-
 				</div>
 
-				<div class="row">
+
+
+			</div>
+
+				<div id="images_library" class="row">
 
 					<div class="col-12">
 
 						<div class="card">
 
-							<div class="card-header card-header-info">
-								<h4 class="card-title">Tags List</h4>
-							</div>
-
 							<div class="card-body">
+
+								<div class="card-header card-header-info">
+									<h4 class="card-title">Images List</h4>
+								</div>
 
 								<div class="table-responsive">
 
-									<table id="tags_list" class="table table-hover">
+									<table id="files_list" class="table table-hover">
 
 										<thead>
 										<tr>
 											<th class="text-info">Name</th>
-											<th class="text-info">Category</th>
-											<th class="text-info">Parent</th>
 											<th class="text-info text-right">Actions</th>
 										</tr>
 										</thead>
@@ -240,8 +231,6 @@
 					</div>
 
 				</div>
-
-			</div>
 
 		</div>
 

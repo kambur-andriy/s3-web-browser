@@ -1,0 +1,602 @@
+require('./bootstrap');
+
+require('./helpers');
+
+
+const getContent = (path = '.') => {
+
+    startProcess();
+
+    axios.get(
+        '/api/list',
+        {
+            params: {
+                path
+            }
+
+        }
+    )
+        .then(
+            response => {
+
+                stopProcess();
+
+                $('#content_list tbody').empty();
+
+                showInfo(response.data.info)
+                showNavigation(response.data.quick_navigation)
+                showDirectories(
+                    sortByName(response.data.directories)
+                );
+                showFiles(
+                    sortByName(response.data.files)
+                );
+
+            }
+        )
+        .catch(
+            error => {
+
+                stopProcess();
+
+                showError(error.response.data.message);
+
+            }
+        )
+
+}
+
+const showDirectories = directoriesList => {
+
+    $.each(directoriesList, function (index, directory) {
+
+        $('#content_list tbody')
+            .append(
+                $('<tr />')
+                    .append(
+                        $('<td />')
+                            .addClass('td-type text-left')
+                            .append(
+                                $('<i />')
+                                    .addClass('material-icons text-gray text-center')
+                                    .text('folder')
+                            )
+                    )
+                    .append(
+                        $('<td />')
+                            .append(
+                                $('<a />')
+                                    .addClass('text-gray change-dir')
+                                    .attr('href', directory.path)
+                                    .text(directory.name)
+                            )
+                    )
+            )
+
+    });
+
+}
+
+const showFiles = filesList => {
+
+    $.each(filesList, function (index, file) {
+
+        $('#content_list tbody')
+            .append(
+                $('<tr />')
+                    .append(
+                        $('<td />')
+                            .addClass('td-type text-left')
+                            .append(
+                                $('<img />')
+                                    .addClass('file-preview')
+                                    .attr(
+                                        {
+                                            'src': file.url,
+                                            'alt': file.name
+                                        }
+                                    )
+                            )
+                    )
+                    .append(
+                        $('<td />')
+                            .append(
+                                $('<a />')
+                                    .addClass('text-gray select-media')
+                                    .attr('href', file.path)
+                                    .text(file.name)
+
+                            )
+                    )
+            )
+
+    });
+
+}
+
+const showNavigation = navigationList => {
+
+    $('#quick_navigation .breadcrumb').empty();
+
+    $.each(navigationList, function (index, directory) {
+
+        $('#quick_navigation .breadcrumb')
+            .append(
+                $('<li />')
+                    .addClass('breadcrumb-item')
+                    .append(
+                        $('<a />')
+                            .addClass('change-dir text-primary font-weight-bold')
+                            .attr('href', directory.path)
+                            .text(directory.name)
+                    )
+            )
+    });
+
+}
+
+const showInfo = dirInfo => {
+
+    $('#select_all_files').prop('checked', false);
+
+    $('#current_directory').data('path', dirInfo.dirPath);
+
+    $('#directory_name').html(dirInfo.dirName);
+
+    $('#dir_count').html(dirInfo.dirCount);
+
+    $('#files_count').html(dirInfo.filesCount);
+
+}
+
+const sortByName = list => {
+
+    if (!$('#sort_content').hasClass('asc') && !$('#sort_content').hasClass('desc')) {
+        return list;
+    }
+
+    const sortOrder = $('#sort_content').hasClass('asc') ? -1 : 1;
+
+    list.sort(
+        (fileSource, fileDest) => {
+
+            const digSource = parseInt(fileSource.name);
+
+            let sourceFileName = fileSource.name;
+
+            if (!isNaN(digSource)) {
+
+                sourceFileName = digSource;
+
+            }
+
+            const digDest = parseInt(fileDest.name);
+
+            let destFileName = fileDest.name;
+
+            if (!isNaN(digDest)) {
+
+                destFileName = digDest;
+
+            }
+
+            if ((typeof sourceFileName) != (typeof destFileName)) {
+
+                return sortOrder;
+
+            }
+
+            if (sourceFileName < destFileName) {
+
+                return sortOrder;
+
+            }
+
+            if (sourceFileName > destFileName) {
+
+                return -sortOrder;
+
+            }
+
+            return 0;
+
+        }
+    );
+
+    return list;
+
+}
+
+const showPreview = target => {
+
+    const fileUrl = target.attr('src');
+    const fileName = target.attr('alt');
+
+    if ($('.preview-container').length !== 0) {
+
+        $('.preview-container .file-info').html(fileName);
+        $('.preview-container .preview-img').data('img_src', fileUrl).css('background-image', 'url(' + fileUrl + ')');
+
+        return;
+    }
+
+    $('body')
+        .append(
+            $('<div />')
+                .addClass('preview-container')
+                .append(
+                    $('<div />')
+                        .addClass('preview-nfo mb-2')
+                        .append(
+                            $('<span />')
+                                .addClass('file-info')
+                                .html(fileName)
+                        )
+                        .append(
+                            $('<span />')
+                                .addClass('close-preview')
+                                .html('&times;')
+                                .on('click', function (event) {
+                                    event.preventDefault();
+                                    $('.preview-container').remove()
+                                })
+                        )
+                )
+                .append(
+                    $('<div />')
+                        .addClass('preview-img')
+                        .css('background-image', 'url(' + fileUrl + ')')
+                        .data('img_src', fileUrl)
+                )
+                .append(
+                    $('<div />')
+                        .addClass('preview-actions mt-2 mb-2')
+                        .append(
+                            $('<button />')
+                                .addClass('btn btn-primary btn-round btn-just-icon')
+                                .attr(
+                                    {
+                                        id: 'preview-prev',
+                                        type: 'button',
+                                    }
+                                )
+                                .append(
+                                    $('<i />')
+                                        .addClass('material-icons')
+                                        .html('keyboard_arrow_left')
+                                )
+                        )
+                        .append(
+                            $('<button />')
+                                .addClass('btn btn-primary btn-round btn-just-icon ml-4')
+                                .attr(
+                                    {
+                                        id: 'preview-next',
+                                        type: 'button',
+                                    }
+                                )
+                                .append(
+                                    $('<i />')
+                                        .addClass('material-icons')
+                                        .html('keyboard_arrow_right')
+                                )
+                        )
+                )
+        )
+
+}
+
+const buildTagsList = () => {
+
+    axios.get(
+        '/api/tags',
+        {}
+    )
+        .then(
+            response => {
+
+                $.each(response.data.tags_categories_list, function(index, category) {
+
+                    $('#image_frm .form-group')
+                        .last()
+                        .before(
+                            $('<div />')
+                                .addClass('form-group')
+                                .append(
+                                    $('<label />')
+                                        .addClass('bmd-label-floating')
+                                        .attr('for', 'category_' + category.id)
+                                        .text(category.name)
+                                )
+                                .append(
+                                    $('<select />')
+                                        .addClass('form-control')
+                                        .attr('id', 'category_' + category.id)
+                                        .append(
+                                            $('<option />')
+                                                .attr('selected', true)
+                                                .text('Select tag ...')
+                                                .val(0)
+                                        )
+                                )
+                        )
+
+                });
+
+                $.each(response.data.tags_list, function(index, tag) {
+
+                    $('#category_' + tag.category.id)
+                        .append(
+                            $('<option />')
+                                .text(tag.name)
+                                .val(tag.id)
+                        )
+                });
+
+            }
+        )
+        .catch(
+            () => {
+
+                showError('Error loading tags');
+
+            }
+        )
+
+};
+
+
+/**
+ * Document ready
+ */
+$(document).ready(function () {
+
+
+    /**
+     * Search on the page
+     */
+    $('#search_form input[type="text"]').on('keyup', function (event) {
+
+        // Clear form
+        if (event.keyCode === 27) {
+
+            $('#clear_search').trigger('click');
+
+        }
+
+        // Toggle visibility of the clear button
+        if ($(this).val().length === 0) {
+
+            $('#clear_search').addClass('d-none');
+
+        } else {
+
+            $('#clear_search').removeClass('d-none');
+
+        }
+
+    });
+
+    $('#clear_search').on('click', function () {
+
+        $('#search_form input[type="text"]').val('');
+
+        $('#search_form').trigger('submit');
+
+        $(this).addClass('d-none');
+
+    });
+
+    $('#search_form').on('submit', function (event) {
+
+        event.preventDefault();
+
+        const search = $('input[type="text"]', $(this)).val().toLowerCase();
+
+        $('#categories_list tbody tr').each(function () {
+
+            const categoryName = $('td:eq(0)', $(this)).text().toLowerCase();
+
+            const notFound = (categoryName.indexOf(search) === -1);
+
+            if (notFound && search.length > 0) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+
+        });
+
+        $('#tags_list tbody tr').each(function () {
+
+            const tagName = $('td:eq(0)', $(this)).text().toLowerCase();
+            const tagCategory = $('td:eq(1)', $(this)).text().toLowerCase();
+            const tagParent = $('td:eq(2)', $(this)).text().toLowerCase();
+
+            const notFound = (tagName.indexOf(search) === -1 && tagCategory.indexOf(search) === -1 && tagParent.indexOf(search) === -1);
+
+            if (notFound && search.length > 0) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+
+        });
+
+    });
+
+
+    /**
+     * Media Library
+     */
+    $(document).on('click', '.change-dir', function (event) {
+
+        event.preventDefault();
+
+        const directory = $(this).attr('href');
+
+        getContent(directory);
+
+    });
+
+    $(document).on('click', '.file-preview', function (event) {
+
+        event.preventDefault();
+
+        showPreview($(this));
+
+    });
+
+    $(document).on('click', '#preview-next', function (event) {
+
+        event.preventDefault();
+
+        const currentPreviewImg = $('.preview-img').data('img_src');
+
+        const currentFile = $('#content_list').find('img[src="' + currentPreviewImg + '"]')
+        let nextTarget = currentFile.parents('tr').next('tr').find('.file-preview');
+
+        if (nextTarget.length === 0) {
+            nextTarget = $('#content_list .file-preview:first-child');
+        }
+
+        showPreview(nextTarget);
+
+    });
+
+    $(document).on('click', '#preview-prev', function (event) {
+
+        event.preventDefault();
+
+        const currentPreviewImg = $('.preview-img').data('img_src');
+
+        const currentFile = $('#content_list').find('img[src="' + currentPreviewImg + '"]')
+        let nextTarget = currentFile.parents('tr').prev('tr').find('.file-preview');
+
+        if (nextTarget.length === 0) {
+            nextTarget = $('#content_list .file-preview').last();
+        }
+
+        showPreview(nextTarget);
+
+    });
+
+    $(document).on('keydown', function (event) {
+
+        switch (event.keyCode) {
+
+            case 27:
+                $('.close-preview').trigger('click')
+                break;
+
+            case 39:
+                $('#preview-next').trigger('click')
+                break;
+
+            case 37:
+                $('#preview-prev').trigger('click')
+                break;
+
+        }
+
+    });
+
+    $(document).on('click', '.select-media', function (event) {
+
+        event.preventDefault();
+
+        const path = $(this).attr('href');
+
+        $('#image_frm input[name="path"]').val(path);
+
+        $('#media_library .close').trigger('click');
+
+    });
+
+
+    /**
+     * Handle actions
+     */
+    $('#image_frm').on('submit', function (event) {
+
+        event.preventDefault();
+
+        const button = $(this).find('button[type="submit"]');
+
+        showSpinner(button);
+
+        let tags = [];
+
+        $('select', this).each(function() {
+
+            const tagId = $(this).val();
+
+            if (tagId === 0) {
+                return false;
+            }
+
+            tags.push(tagId);
+
+        });
+
+        const credentials = {
+            path: $('input[name="path"]', this).val(),
+            tags_list: tags
+        };
+
+        axios.post(
+            '/api/images',
+            qs.stringify(credentials)
+        )
+            .then(
+                response => {
+
+                    hideSpinner(button);
+
+                    clearForm($(this));
+
+                    showMessage('Category successfully created.')
+                        .then(
+                            () => addCategory(response.data)
+                        )
+
+                }
+            )
+            .catch(
+                error => {
+
+                    hideSpinner(button);
+
+                    processErrors(error, $(this));
+
+                }
+            )
+    });
+
+    $('#image_frm input[name="path"]').on('click', function () {
+
+        $('#images_library').addClass('d-none');
+        $('#media_library').removeClass('d-none');
+
+        getContent();
+
+    });
+
+    $('#media_library .close').on('click', function () {
+
+        $('#images_library').removeClass('d-none');
+        $('#media_library').addClass('d-none');
+
+    });
+
+    $(document).on('change', '#image_frm select', function (event) {
+
+        event.preventDefault();
+
+
+    });
+
+
+    buildTagsList();
+
+});

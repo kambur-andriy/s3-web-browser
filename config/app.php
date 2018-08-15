@@ -161,6 +161,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 	    App\Providers\StorageServiceProvider::class,
 	    App\Providers\TagsServiceProvider::class,
+	    App\Providers\ImagesServiceProvider::class,
 
     ],
 

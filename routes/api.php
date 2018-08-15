@@ -25,3 +25,8 @@ Route::post('/tags/categories/edit', 'ApiController@editCategory');
 Route::post('/tags/edit', 'ApiController@editTag');
 
 Route::get('/tags', 'ApiController@tags');
+
+/**
+ * Images routes
+ */
+Route::post('/images', 'ApiController@createImage');

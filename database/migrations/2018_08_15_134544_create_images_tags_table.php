@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTagsTable extends Migration
+class CreateImagesTagsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateTagsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('images_tags', function (Blueprint $table) {
             $table->increments('id');
-	        $table->integer('category_id')->index();
-	        $table->integer('parent_tag_id')->index();
-	        $table->string('name');
+	        $table->integer('image_id')->index();
+	        $table->integer('tag_id')->index();
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreateTagsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('images_tags');
     }
 }

@@ -27,9 +27,9 @@ const buildTagsList = () => {
             }
         )
         .catch(
-            error => {
+            () => {
 
-                processErrors(error, $(this));
+                showError('Error loading tags');
 
             }
         )
