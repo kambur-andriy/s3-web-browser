@@ -26,7 +26,7 @@ window.clearFormError = target => {
 
 };
 
-$(document).on('focus', 'input[type="text"], input[type="email"], input[type="password"], textarea', function () {
+$(document).on('focus', 'input[type="text"], input[type="email"], input[type="password"], textarea, select', function () {
 
     clearFormError($(this));
 

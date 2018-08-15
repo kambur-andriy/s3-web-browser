@@ -88,15 +88,15 @@
 
 							<div class="form-group">
 								<label for="category" class="bmd-label-floating">Tag category</label>
-								<select class="form-control" name="category">
+								<select id="category" class="form-control" name="category">
 									<option value="0" selected>Select category</option>
 								</select>
 							</div>
 
 							<div class="form-group">
 								<label for="parent_tag" class="bmd-label-floating">Parent tag</label>
-								<select class="form-control" name="parent_tag">
-									<option value="0">No parent tags</option>
+								<select id="parent_tag" class="form-control" name="parent_tag">
+									<option value="0">Without parents</option>
 								</select>
 							</div>
 

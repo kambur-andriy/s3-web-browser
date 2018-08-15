@@ -6,6 +6,8 @@ namespace App\Models;
 use App\Exceptions\TagsException;
 use App\Http\Requests\CreateTag;
 use App\Http\Requests\CreateTagsCategory;
+use App\Http\Requests\EditTag;
+use App\Http\Requests\EditTagsCategory;
 use App\Http\Requests\RemoveTag;
 use App\Http\Requests\RemoveTagsCategory;
 use App\Models\DB\Tag;
@@ -73,6 +75,29 @@ class TagsService
 		$category = $this->findCategory($categoryId);
 
 		$category->delete();
+
+	}
+
+	/**
+	 * Edit category
+	 *
+	 * @param EditTagsCategory $request
+	 *
+	 * @return TagsCategory
+	 * @throws TagsException
+	 */
+	public function editCategory(EditTagsCategory $request)
+	{
+
+		$categoryId = $request->id;
+		$categoryName = $request->name;
+
+		$category = $this->findCategory($categoryId);
+
+		$category->name = $categoryName;
+		$category->save();
+
+		return $category;
 
 	}
 
@@ -155,6 +180,33 @@ class TagsService
 		$tag = $this->findTag($tagId);
 
 		$tag->delete();
+
+	}
+
+	/**
+	 * Edit tag
+	 *
+	 * @param EditTag $request
+	 *
+	 * @return Tag
+	 * @throws TagsException
+	 */
+	public function editTag(EditTag $request)
+	{
+
+		$tagId = $request->id;
+		$tagName = $request->name;
+		$tagCategory = $request->category;
+		$tagParent = $request->parent_tag;
+
+		$tag = $this->findTag($tagId);
+
+		$tag->name = $tagName;
+		$tag->category_id = $tagCategory;
+		$tag->parent_tag_id = $tagParent;
+		$tag->save();
+
+		return $this->findTag($tag->id);
 
 	}
 

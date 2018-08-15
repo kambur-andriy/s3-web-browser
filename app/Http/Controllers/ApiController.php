@@ -13,6 +13,8 @@ use App\Http\Requests\ContentRename;
 use App\Http\Requests\CreateTag;
 use App\Http\Requests\CreateTagsCategory;
 use App\Http\Requests\DirectoryMake;
+use App\Http\Requests\EditTag;
+use App\Http\Requests\EditTagsCategory;
 use App\Http\Requests\FileDownload;
 use App\Http\Requests\FileUpload;
 use App\Http\Requests\RemoveTag;
@@ -268,6 +270,44 @@ class ApiController extends Controller
 
 		return response()->json(
 			[]
+		);
+
+	}
+
+	/**
+	 * Remove category
+	 *
+	 * @param EditTagsCategory $request
+	 *
+	 * @return JSON
+	 * @throws TagsException
+	 */
+	public function editCategory(EditTagsCategory $request)
+	{
+
+		$category = $this->tagsService->editCategory($request);
+
+		return response()->json(
+			$category
+		);
+
+	}
+
+	/**
+	 * Remove tag
+	 *
+	 * @param EditTag $request
+	 *
+	 * @return JSON
+	 * @throws TagsException
+	 */
+	public function editTag(EditTag $request)
+	{
+
+		$tag = $this->tagsService->editTag($request);
+
+		return response()->json(
+			$tag
 		);
 
 	}

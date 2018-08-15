@@ -6,7 +6,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 
-class CreateTag extends FormRequest
+class EditTag extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,6 +26,7 @@ class CreateTag extends FormRequest
     public function rules()
     {
         return [
+        	'id' => 'required|integer|bail',
 	        'name' => 'required|string|bail',
 	        'category' => 'required|integer|min:1|bail',
 	        'parent_tag' => 'required|integer|bail',
@@ -43,4 +44,5 @@ class CreateTag extends FormRequest
 			'category.min' => 'The category field is required.',
 		];
 	}
+
 }
