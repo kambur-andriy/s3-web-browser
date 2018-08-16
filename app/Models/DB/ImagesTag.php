@@ -24,4 +24,17 @@ class ImagesTag extends Model
 		'created_at', 'updated_at'
 	];
 
+	/**
+	 * Return tag
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function tag()
+	{
+
+		return $this->hasOne('App\Models\DB\Tag', 'id', 'tag_id');
+
+	}
+
+
 }

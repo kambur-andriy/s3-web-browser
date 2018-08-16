@@ -3,6 +3,168 @@ require('./bootstrap');
 require('./helpers');
 
 
+const buildTagsList = () => {
+
+    axios.get(
+        '/api/tags',
+        {}
+    )
+        .then(
+            response => {
+
+                $.each(response.data.tags_categories_list, function(index, category) {
+
+                    $('#image_frm .form-group')
+                        .last()
+                        .before(
+                            $('<div />')
+                                .addClass('form-group')
+                                .append(
+                                    $('<label />')
+                                        .addClass('bmd-label-floating')
+                                        .attr('for', 'category_' + category.id)
+                                        .text(category.name)
+                                )
+                                .append(
+                                    $('<select />')
+                                        .addClass('form-control')
+                                        .attr('id', 'category_' + category.id)
+                                        .append(
+                                            $('<option />')
+                                                .attr('selected', true)
+                                                .text('Select tag ...')
+                                                .val(0)
+                                        )
+                                )
+                        )
+
+                    $('#images_list th')
+                        .last()
+                        .before(
+                            $('<th />')
+                                .addClass('text-info tag-category')
+                                .attr('id', 'il_cat_' + category.id)
+                                .text(category.name)
+                        )
+
+                });
+
+                $.each(response.data.tags_list, function(index, tag) {
+
+                    $('#category_' + tag.category.id)
+                        .append(
+                            $('<option />')
+                                .data('parent_tag', tag.parent_tag)
+                                .text(tag.name)
+                                .val(tag.id)
+                        )
+                });
+
+            }
+        )
+        .catch(
+            () => {
+
+                showError('Error loading tags');
+
+            }
+        )
+
+};
+
+const buildImagesList = () => {
+
+    axios.get(
+        '/api/images',
+        {}
+    )
+        .then(
+            response => {
+
+                $.each(response.data, function(index, image) {
+
+                    addImage(image);
+
+                });
+
+            }
+        )
+        .catch(
+            () => {
+
+                showError('Error loading images');
+
+            }
+        )
+
+};
+
+const addImage = image => {
+
+
+    $('#images_list')
+        .prepend(
+            $('<tr />')
+                .attr('id', image.id)
+                .append(
+                    $('<td />')
+                        .html(image.name)
+                )
+                .append(
+                    $('<td />')
+                        .html(image.path)
+                )
+                .append(
+                    $('<td />')
+                        .addClass('td-actions text-right')
+                        .append(
+                            $('<button />')
+                                .addClass('btn btn-danger btn-link btn-sm remove-image-btn')
+                                .attr(
+                                    {
+                                        'type': 'button',
+                                    }
+                                )
+                                .append(
+                                    $('<i />')
+                                        .addClass('material-icons')
+                                        .text('delete_forever')
+                                )
+                        )
+
+                )
+        )
+
+    $('.tag-category').each(function() {
+
+        const id = $(this).attr('id');
+
+        $('#images_list #' + image.id + ' td')
+            .last()
+            .before(
+                $('<td />')
+                    .addClass(id)
+                    .text('')
+            )
+    });
+
+    $.each(image.tags, function(index, imageTag) {
+
+        if (!imageTag.tag) {
+
+            return;
+
+        }
+
+        const category = imageTag.tag.category_id;
+
+        $('#images_list #' + image.id + ' td.il_cat_' + category)
+            .text(imageTag.tag.name)
+
+    });
+
+};
+
 const getContent = (path = '.') => {
 
     startProcess();
@@ -286,64 +448,32 @@ const showPreview = target => {
 
 }
 
-const buildTagsList = () => {
+const removeImage = id => {
 
-    axios.get(
-        '/api/tags',
-        {}
+    const credentials = {
+        id
+    };
+
+    axios.post(
+        '/api/images/remove',
+        qs.stringify(credentials)
     )
         .then(
-            response => {
+            () => {
 
-                $.each(response.data.tags_categories_list, function(index, category) {
-
-                    $('#image_frm .form-group')
-                        .last()
-                        .before(
-                            $('<div />')
-                                .addClass('form-group')
-                                .append(
-                                    $('<label />')
-                                        .addClass('bmd-label-floating')
-                                        .attr('for', 'category_' + category.id)
-                                        .text(category.name)
-                                )
-                                .append(
-                                    $('<select />')
-                                        .addClass('form-control')
-                                        .attr('id', 'category_' + category.id)
-                                        .append(
-                                            $('<option />')
-                                                .attr('selected', true)
-                                                .text('Select tag ...')
-                                                .val(0)
-                                        )
-                                )
-                        )
-
-                });
-
-                $.each(response.data.tags_list, function(index, tag) {
-
-                    $('#category_' + tag.category.id)
-                        .append(
-                            $('<option />')
-                                .text(tag.name)
-                                .val(tag.id)
-                        )
-                });
+                $('#images_list').find('tr#'+ id).remove();
 
             }
         )
         .catch(
             () => {
 
-                showError('Error loading tags');
+                showError('Error removing image.')
 
             }
         )
 
-};
+}
 
 
 /**
@@ -393,27 +523,19 @@ $(document).ready(function () {
 
         const search = $('input[type="text"]', $(this)).val().toLowerCase();
 
-        $('#categories_list tbody tr').each(function () {
+        $('#images_list tbody tr').each(function () {
 
-            const categoryName = $('td:eq(0)', $(this)).text().toLowerCase();
+            const fileName = $('td:eq(0)', $(this)).text().toLowerCase();
+            const filePath = $('td:eq(1)', $(this)).text().toLowerCase();
 
-            const notFound = (categoryName.indexOf(search) === -1);
+            let notFound = (fileName.indexOf(search) === -1 && filePath.indexOf(search) === -1);
 
-            if (notFound && search.length > 0) {
-                $(this).hide();
-            } else {
-                $(this).show();
-            }
+            $(this).find('td:gt(1)').not('td-actions').each(function() {
 
-        });
+                const tagName = $(this).text().toLowerCase();
 
-        $('#tags_list tbody tr').each(function () {
-
-            const tagName = $('td:eq(0)', $(this)).text().toLowerCase();
-            const tagCategory = $('td:eq(1)', $(this)).text().toLowerCase();
-            const tagParent = $('td:eq(2)', $(this)).text().toLowerCase();
-
-            const notFound = (tagName.indexOf(search) === -1 && tagCategory.indexOf(search) === -1 && tagParent.indexOf(search) === -1);
+                notFound = notFound && (tagName.indexOf(search) === -1);
+            });
 
             if (notFound && search.length > 0) {
                 $(this).hide();
@@ -506,8 +628,10 @@ $(document).ready(function () {
         event.preventDefault();
 
         const path = $(this).attr('href');
+        const name = $(this).text();
 
         $('#image_frm input[name="path"]').val(path);
+        $('#image_frm input[name="name"]').val(name);
 
         $('#media_library .close').trigger('click');
 
@@ -532,7 +656,7 @@ $(document).ready(function () {
             const tagId = $(this).val();
 
             if (tagId === 0) {
-                return false;
+                return;
             }
 
             tags.push(tagId);
@@ -541,6 +665,7 @@ $(document).ready(function () {
 
         const credentials = {
             path: $('input[name="path"]', this).val(),
+            name: $('input[name="name"]', this).val(),
             tags_list: tags
         };
 
@@ -555,9 +680,9 @@ $(document).ready(function () {
 
                     clearForm($(this));
 
-                    showMessage('Category successfully created.')
+                    showMessage('Image successfully created.')
                         .then(
-                            () => addCategory(response.data)
+                            () => addImage(response.data)
                         )
 
                 }
@@ -574,6 +699,8 @@ $(document).ready(function () {
     });
 
     $('#image_frm input[name="path"]').on('click', function () {
+
+        $('#image_frm input[name="name"]').trigger('focus');
 
         $('#images_library').addClass('d-none');
         $('#media_library').removeClass('d-none');
@@ -593,10 +720,58 @@ $(document).ready(function () {
 
         event.preventDefault();
 
+        const selectedTagId = parseInt($(this).val());
+
+        $('#image_frm option').each(function() {
+
+            $(this).show();
+
+            const parentTag = $(this).data('parent_tag');
+
+            if (!parentTag) {
+                return;
+            }
+
+            if (parentTag.id === 0) {
+                return;
+            }
+
+            if (parentTag.id === selectedTagId) {
+                return;
+            }
+
+            $(this).hide();
+
+        });
+
+    });
+
+    $(document).on('click', '.remove-image-btn', function(event) {
+
+        event.preventDefault();
+
+        const id = $(this).parents('tr').attr('id');
+
+        showConfirmation('You are trying to delete image.')
+            .then(
+                value => {
+
+                    if (value) {
+                        removeImage(id)
+                    }
+
+                }
+            )
 
     });
 
 
+    /**
+     * Start application
+     */
     buildTagsList();
+
+    buildImagesList();
+
 
 });

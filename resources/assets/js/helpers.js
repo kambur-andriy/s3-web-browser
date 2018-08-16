@@ -192,4 +192,8 @@ window.clearForm = form => {
         $(this).val('');
     });
 
+    $('select').each(function() {
+        $(this).val(0);
+    });
+
 }

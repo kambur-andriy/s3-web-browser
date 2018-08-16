@@ -19,6 +19,7 @@ use App\Http\Requests\EditTag;
 use App\Http\Requests\EditTagsCategory;
 use App\Http\Requests\FileDownload;
 use App\Http\Requests\FileUpload;
+use App\Http\Requests\RemoveImage;
 use App\Http\Requests\RemoveTag;
 use App\Http\Requests\RemoveTagsCategory;
 use App\Models\ImagesService;
@@ -358,6 +359,43 @@ class ApiController extends Controller
 
 		return response()->json(
 			$image
+		);
+
+	}
+
+	/**
+	 * Remove image
+	 *
+	 * @param RemoveImage $request
+	 *
+	 * @return JSON
+	 * @throws \Exception|ImagesException
+	 */
+	public function removeImage(RemoveImage $request)
+	{
+
+		$this->imagesService->removeImage($request);
+
+		return response()->json(
+			[]
+		);
+
+	}
+
+	/**
+	 * Images List
+	 *
+	 * @param CreateTagsCategory $request
+	 *
+	 * @return JSON
+	 */
+	public function images()
+	{
+
+		$imagesList = $this->imagesService->imagesList();
+
+		return response()->json(
+			$imagesList
 		);
 
 	}

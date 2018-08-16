@@ -30,3 +30,6 @@ Route::get('/tags', 'ApiController@tags');
  * Images routes
  */
 Route::post('/images', 'ApiController@createImage');
+Route::post('/images/remove', 'ApiController@removeImage');
+
+Route::get('/images', 'ApiController@images');

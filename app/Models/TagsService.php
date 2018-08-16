@@ -135,12 +135,6 @@ class TagsService
 	}
 
 
-
-
-
-
-
-
 	/**
 	 * Create tag
 	 *

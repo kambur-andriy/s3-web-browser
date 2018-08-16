@@ -47,7 +47,7 @@
 					</div>
 				</li>
 
-				<li class="nav-item row">
+				<li class="nav-item">
 
 					<div class="col-10 offset-1 mt-4">
 
@@ -75,7 +75,7 @@
 					</div>
 				</li>
 
-				<li class="nav-item row">
+				<li class="nav-item">
 
 					<div class="col-10 offset-1">
 

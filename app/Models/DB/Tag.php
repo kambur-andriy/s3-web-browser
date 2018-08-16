@@ -35,6 +35,7 @@ class Tag extends Model
 
 		return $this->belongsTo('App\Models\DB\TagsCategory', 'category_id', 'id')->withDefault(
 			[
+				'id' => 0,
 				'name' => 'Without category'
 			]
 		);
@@ -51,6 +52,7 @@ class Tag extends Model
 
 		return $this->belongsTo('App\Models\DB\Tag', 'parent_tag_id', 'id')->withDefault(
 			[
+				'id' => 0,
 				'name' => 'Without parents'
 			]
 		);

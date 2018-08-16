@@ -5,6 +5,7 @@ namespace App\Models;
 
 use App\Exceptions\ImagesException;
 use App\Http\Requests\CreateImage;
+use App\Http\Requests\RemoveImage;
 use App\Models\DB\Image;
 use App\Models\DB\ImagesTag;
 
@@ -48,11 +49,13 @@ class ImagesService
 	{
 
 		$imagePath = $request->path;
+		$imageName = $request->name;
 		$imageTags = $request->tags_list;
 
 		$image = $this->imageModel->create(
 			[
-				'path' => $imagePath
+				'path' => $imagePath,
+				'name' => $imageName
 			]
 		);
 
@@ -67,36 +70,33 @@ class ImagesService
 		}
 
 		
-		return $this->findImage($image->id);
+		return $this->findImageWithTags($image->id);
 	}
-
 
 	/**
-	 * Edit image
+	 * Remove image
 	 *
-	 * @param EditTag $request
+	 * @param RemoveImage $request
 	 *
-	 * @return Image
-	 * @throws ImagesException
+	 * @return void
+	 * @throws \Exception
 	 */
-	public function editImage(EditTag $request)
+	public function removeImage(RemoveImage $request)
 	{
 
-//		$tagId = $request->id;
-//		$tagName = $request->name;
-//		$tagCategory = $request->category;
-//		$tagParent = $request->parent_tag;
-//
-//		$tag = $this->findTag($tagId);
-//
-//		$tag->name = $tagName;
-//		$tag->category_id = $tagCategory;
-//		$tag->parent_tag_id = $tagParent;
-//		$tag->save();
-//
-//		return $this->findTag($tag->id);
+		$imageId = $request->id;
+
+		$image = $this->findImage($imageId);
+
+		$image->delete();
+
+		foreach ($this->findImageTags($imageId) as $imageTag) {
+
+			$imageTag->delete();
+		}
 
 	}
+
 
 	/**
 	 * Find image
@@ -120,6 +120,39 @@ class ImagesService
 	}
 
 	/**
+	 * Find image tags
+	 *
+	 * @param integer $imageId
+	 *
+	 * @return Image
+	 */
+	public function findImageTags($imageId)
+	{
+
+		return $this->imagesTagModel->where('image_id', $imageId)->with('tag')->get();
+
+	}
+
+	/**
+	 * Find image with tags
+	 *
+	 * @param integer $imageId
+	 *
+	 * @return Image
+	 * @throws ImagesException
+	 */
+	public function findImageWithTags($imageId)
+	{
+
+		$image = $this->findImage($imageId);
+
+		$image->tags = $this->findImageTags($imageId);
+
+		return $image;
+
+	}
+
+	/**
 	 * Images list
 	 *
 	 * @return Image[]|\Illuminate\Database\Eloquent\Collection
@@ -127,7 +160,19 @@ class ImagesService
 	public function imagesList()
 	{
 
-		return $this->imageModel->with('tags')->get();
+		$tagsList = $this->imagesTagModel->with('tag')->get()->groupBy('image_id')->toArray();
+
+		$imagesList = [];
+
+		foreach ($this->imageModel->all() as $image) {
+
+			$image->tags = $tagsList[$image->id] ?? [];
+
+			$imagesList[] = $image;
+
+		}
+
+		return $imagesList;
 
 	}
 

@@ -168,9 +168,9 @@ const removeCategory = id => {
             }
         )
         .catch(
-            error => {
+            () => {
 
-                processErrors(error, $(this));
+                showError('Error removing tags category.')
 
             }
         )
@@ -195,9 +195,9 @@ const removeTag = id => {
             }
         )
         .catch(
-            error => {
+            () => {
 
-                processErrors(error, $(this));
+                showError('Error removing tag.')
 
             }
         )
@@ -595,6 +595,9 @@ $(document).ready(function () {
 
     });
 
+    /**
+     * Start application
+     */
     buildTagsList();
 
 });

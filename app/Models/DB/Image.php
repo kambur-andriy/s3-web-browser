@@ -12,7 +12,7 @@ class Image extends Model
 	 * @var array
 	 */
 	protected $fillable = [
-		'path'
+		'path', 'name'
 	];
 
 	/**
@@ -25,7 +25,7 @@ class Image extends Model
 	];
 
 	/**
-	 * Return tags list
+	 * Return image tags id list
 	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */

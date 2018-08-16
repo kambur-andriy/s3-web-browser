@@ -40,15 +40,21 @@
 
 			<ul class="nav">
 
-				<li class="nav-item row">
+				<li class="nav-item">
 
 					<div class="col-10 offset-1 mt-4">
 
 						<form id="image_frm" novalidate>
 
 							<div class="form-group">
-								<label for="name" class="bmd-label-floating">Media File</label>
-								<input type="text" class="form-control-plaintext" name="path" placeholder="Click to open media library ..." />
+								<label for="path" class="bmd-label-floating">File path</label>
+								<input type="text" class="form-control-plaintext" name="path" placeholder="Click to open media library ..."
+								       autocomplete="off"/>
+							</div>
+
+							<div class="form-group">
+								<label for="name" class="bmd-label-floating">File name</label>
+								<input type="text" class="form-control-plaintext" name="name" autocomplete="off"/>
 							</div>
 
 							<div class="form-group">
@@ -105,7 +111,7 @@
 
 					</form>
 
-					<ul class="navbar-nav"> </ul>
+					<ul class="navbar-nav"></ul>
 				</div>
 
 			</div>
@@ -189,11 +195,10 @@
 
 						</div>
 
+					</div>
+
+
 				</div>
-
-
-
-			</div>
 
 				<div id="images_library" class="row">
 
@@ -209,11 +214,12 @@
 
 								<div class="table-responsive">
 
-									<table id="files_list" class="table table-hover">
+									<table id="images_list" class="table table-hover">
 
 										<thead>
 										<tr>
 											<th class="text-info">Name</th>
+											<th class="text-info">Path</th>
 											<th class="text-info text-right">Actions</th>
 										</tr>
 										</thead>
@@ -232,12 +238,12 @@
 
 				</div>
 
+			</div>
+
+
 		</div>
 
-
 	</div>
-
-</div>
 
 </body>
 </html>

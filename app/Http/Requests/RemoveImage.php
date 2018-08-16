@@ -6,7 +6,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 
-class CreateImage extends FormRequest
+class RemoveImage extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,10 +26,7 @@ class CreateImage extends FormRequest
     public function rules()
     {
         return [
-	        'path' => 'required|string|bail',
-	        'name' => 'required|string|bail',
-	        'tags_list' => 'required|array|bail',
+	        'id' => 'required|integer|bail',
         ];
     }
-
 }
