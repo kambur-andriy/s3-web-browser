@@ -12,7 +12,7 @@ const buildTagsList = () => {
         .then(
             response => {
 
-                $.each(response.data.tags_categories_list, function(index, category) {
+                $.each(response.data.tags_categories_list, function (index, category) {
 
                     $('#image_frm .form-group')
                         .last()
@@ -27,7 +27,7 @@ const buildTagsList = () => {
                                 )
                                 .append(
                                     $('<select />')
-                                        .addClass('form-control')
+                                        .addClass('form-control images-tags')
                                         .attr('id', 'category_' + category.id)
                                         .append(
                                             $('<option />')
@@ -38,7 +38,7 @@ const buildTagsList = () => {
                                 )
                         )
 
-                    $('#images_list th')
+                    $('#images_list #images_list_headers th')
                         .last()
                         .before(
                             $('<th />')
@@ -47,9 +47,28 @@ const buildTagsList = () => {
                                 .text(category.name)
                         )
 
+                    $('#images_list #images_list_filters th')
+                        .last()
+                        .before(
+                            $('<th />')
+                                .addClass('text-info')
+                                .append(
+                                    $('<select />')
+                                        .addClass('form-control images-tags-filters text-primary')
+                                        .attr('id', 'filter_cat_' + category.id)
+                                        .append(
+                                            $('<option />')
+                                                .addClass('text-primary')
+                                                .attr('selected', true)
+                                                .val(0)
+                                                .text('...')
+                                        )
+                                )
+                        )
+
                 });
 
-                $.each(response.data.tags_list, function(index, tag) {
+                $.each(response.data.tags_list, function (index, tag) {
 
                     $('#category_' + tag.category.id)
                         .append(
@@ -58,6 +77,14 @@ const buildTagsList = () => {
                                 .text(tag.name)
                                 .val(tag.id)
                         )
+
+                    $('#filter_cat_' + tag.category.id)
+                        .append(
+                            $('<option />')
+                                .text(tag.name)
+                                .val(tag.id)
+                        )
+
                 });
 
             }
@@ -81,7 +108,7 @@ const buildImagesList = () => {
         .then(
             response => {
 
-                $.each(response.data, function(index, image) {
+                $.each(response.data, function (index, image) {
 
                     addImage(image);
 
@@ -131,11 +158,10 @@ const addImage = image => {
                                         .text('delete_forever')
                                 )
                         )
-
                 )
         )
 
-    $('.tag-category').each(function() {
+    $('.tag-category').each(function () {
 
         const id = $(this).attr('id');
 
@@ -148,7 +174,7 @@ const addImage = image => {
             )
     });
 
-    $.each(image.tags, function(index, imageTag) {
+    $.each(image.tags, function (index, imageTag) {
 
         if (!imageTag.tag) {
 
@@ -267,7 +293,6 @@ const showFiles = filesList => {
                                     .addClass('text-gray select-media')
                                     .attr('href', file.path)
                                     .text(file.name)
-
                             )
                     )
             )
@@ -461,7 +486,7 @@ const removeImage = id => {
         .then(
             () => {
 
-                $('#images_list').find('tr#'+ id).remove();
+                $('#images_list').find('tr#' + id).remove();
 
             }
         )
@@ -530,7 +555,7 @@ $(document).ready(function () {
 
             let notFound = (fileName.indexOf(search) === -1 && filePath.indexOf(search) === -1);
 
-            $(this).find('td:gt(1)').not('td-actions').each(function() {
+            $(this).find('td:gt(1)').not('.td-actions').each(function () {
 
                 const tagName = $(this).text().toLowerCase();
 
@@ -651,7 +676,7 @@ $(document).ready(function () {
 
         let tags = [];
 
-        $('select', this).each(function() {
+        $('select', this).each(function () {
 
             const tagId = $(this).val();
 
@@ -722,7 +747,7 @@ $(document).ready(function () {
 
         const selectedTagId = parseInt($(this).val());
 
-        $('#image_frm option').each(function() {
+        $('#image_frm option').each(function () {
 
             $(this).show();
 
@@ -746,7 +771,60 @@ $(document).ready(function () {
 
     });
 
-    $(document).on('click', '.remove-image-btn', function(event) {
+    $(document).on('change', '#images_list select', function (event) {
+
+        event.preventDefault();
+
+        let selectedFilters = [];
+
+        $('.images-tags-filters').each(function () {
+
+            const id = $(this).attr('id').replace('filter', 'il');
+            const filterVal = $(this).find('option:selected').text().toLowerCase();
+
+            if (parseInt($(this).val()) !== 0) {
+                selectedFilters[id] = filterVal;
+            }
+
+        });
+
+
+        $('#images_list tbody tr').each(function () {
+
+            let notFound = false;
+
+            let row = $(this);
+
+            $('.images-tags-filters').each(function () {
+
+                if (parseInt($(this).val()) === 0) {
+                    return;
+                }
+
+                const id = $(this).attr('id').replace('filter', 'il');
+                const filterName = $(this).find('option:selected').text().toLowerCase();
+
+                const tagName = $('.' + id, row).text().toLowerCase();
+
+                if (tagName !== filterName) {
+                    notFound = true;
+
+                    return;
+                }
+
+            });
+
+            if (notFound) {
+                row.hide();
+            } else {
+                row.show();
+            }
+
+        });
+
+    });
+
+    $(document).on('click', '.remove-image-btn', function (event) {
 
         event.preventDefault();
 

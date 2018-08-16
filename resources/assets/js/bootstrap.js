@@ -12,4 +12,10 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
+let authToken = JSON.parse(localStorage.getItem('mapaResearchReduxState'));
+
+if (authToken && authToken.login && authToken.login.token) {
+    window.axios.defaults.headers.common['token'] = authToken.login.token;
+}
+
 window.qs = require('qs');

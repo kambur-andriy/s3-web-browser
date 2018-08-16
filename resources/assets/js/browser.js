@@ -918,7 +918,9 @@ $(document).ready(function () {
 
         const path = $(this).parents('tr').find('input[type="checkbox"]').val();
 
-        window.open('/api/download?path=' + path, '_blanc');
+        const authToken = JSON.parse(localStorage.getItem('mapaResearchReduxState'));
+
+        window.open('/api/download?path=' + path + '&_token=' + authToken.login.token, '_blanc');
 
     });
 
