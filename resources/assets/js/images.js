@@ -135,6 +135,21 @@ const addImage = image => {
                 .attr('id', image.id)
                 .append(
                     $('<td />')
+                        .addClass('text-left')
+                        .append(
+                            $('<img />')
+                                .addClass('file-preview')
+                                .attr(
+                                    {
+                                        'src': image.url,
+                                        'alt': image.name
+                                    }
+                                )
+                        )
+
+                )
+                .append(
+                    $('<td />')
                         .html(image.name)
                 )
                 .append(

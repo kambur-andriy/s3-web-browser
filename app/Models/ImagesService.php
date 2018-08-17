@@ -24,16 +24,23 @@ class ImagesService
 	private $imagesTagModel;
 
 	/**
+	 * @var StorageService
+	 */
+	private $storageService;
+
+	/**
 	 * ImagesService constructor.
 	 *
 	 * @param Image $imageModel
 	 * @param ImagesTag $imagesTagModel
+	 * @param StorageService $storageService
 	 */
-	public function __construct(Image $imageModel, ImagesTag $imagesTagModel)
+	public function __construct(Image $imageModel, ImagesTag $imagesTagModel, StorageService $storageService)
 	{
 
 		$this->imageModel = $imageModel;
 		$this->imagesTagModel = $imagesTagModel;
+		$this->storageService = $storageService;
 
 	}
 
@@ -166,6 +173,7 @@ class ImagesService
 
 		foreach ($this->imageModel->all() as $image) {
 
+			$image->url = $this->storageService->fileUrl($image->path);
 			$image->tags = $tagsList[$image->id] ?? [];
 
 			$imagesList[] = $image;

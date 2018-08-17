@@ -219,13 +219,14 @@
 										<thead>
 
 											<tr id="images_list_headers">
+												<th class="text-info">View</th>
 												<th class="text-info">Name</th>
 												<th class="text-info">Path</th>
 												<th class="text-info text-right">Actions</th>
 											</tr>
 
 											<tr id="images_list_filters">
-												<th colspan="2" class="text-primary">Tags filters</th>
+												<th colspan="3" class="text-primary">Tags filters</th>
 												<th></th>
 											</tr>
 

@@ -280,6 +280,22 @@ class StorageService
 
 	}
 
+	/**
+	 * Get file url
+	 *
+	 * @param string $filePath
+	 *
+	 * @return string
+	 */
+	public function fileUrl($filePath)
+	{
+
+		return $this->storage->temporaryUrl(
+			$filePath,
+			now()->addMinutes(30)
+		);
+
+	}
 
 	/**
 	 * Get file size
@@ -419,10 +435,7 @@ class StorageService
 			$filesList[] = [
 				'name' => $fileInfo['basename'],
 				'path' => $s3File,
-				'url' => $this->storage->temporaryUrl(
-					$s3File,
-					now()->addMinutes(30)
-				)
+				'url' => $this->fileUrl($s3File)
 			];
 
 		}
