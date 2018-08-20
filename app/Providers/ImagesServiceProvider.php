@@ -34,10 +34,9 @@ class ImagesServiceProvider extends ServiceProvider
 	    App::bind(ImagesService::class, function ($app) {
 
 		    $imageModel = new Image();
-		    $imagesTagModel = new ImagesTag();
 			$storageService = $app->make(StorageService::class);
 
-		    return new ImagesService($imageModel, $imagesTagModel, $storageService);
+		    return new ImagesService($imageModel, $storageService);
 
 	    });
 

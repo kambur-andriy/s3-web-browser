@@ -32,7 +32,7 @@ class Image extends Model
 	public function tags()
 	{
 
-		return $this->hasMany('App\Models\DB\ImagesTag', 'image_id', 'id');
+		return $this->belongsToMany('App\Models\DB\Tag', 'images_tags','image_id', 'tag_id');
 
 	}
 

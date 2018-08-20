@@ -128,7 +128,6 @@ const buildImagesList = () => {
 
 const addImage = image => {
 
-
     $('#images_list')
         .prepend(
             $('<tr />')
@@ -191,16 +190,10 @@ const addImage = image => {
 
     $.each(image.tags, function (index, imageTag) {
 
-        if (!imageTag.tag) {
-
-            return;
-
-        }
-
-        const category = imageTag.tag.category_id;
+        const category = imageTag.category_id;
 
         $('#images_list #' + image.id + ' td.il_cat_' + category)
-            .text(imageTag.tag.name)
+            .text(imageTag.name)
 
     });
 
@@ -411,6 +404,9 @@ const sortByName = list => {
 
 const showPreview = target => {
 
+    $('.current_preview').removeClass('current_preview');
+    target.addClass('current_preview');
+
     const fileUrl = target.attr('src');
     const fileName = target.attr('alt');
 
@@ -613,13 +609,12 @@ $(document).ready(function () {
 
         event.preventDefault();
 
-        const currentPreviewImg = $('.preview-img').data('img_src');
+        const currentFile = $('.current_preview');
 
-        const currentFile = $('#content_list').find('img[src="' + currentPreviewImg + '"]')
         let nextTarget = currentFile.parents('tr').next('tr').find('.file-preview');
 
         if (nextTarget.length === 0) {
-            nextTarget = $('#content_list .file-preview:first-child');
+            nextTarget = $('.file-preview:visible').first();
         }
 
         showPreview(nextTarget);
@@ -630,13 +625,12 @@ $(document).ready(function () {
 
         event.preventDefault();
 
-        const currentPreviewImg = $('.preview-img').data('img_src');
+        const currentFile = $('.current_preview');
 
-        const currentFile = $('#content_list').find('img[src="' + currentPreviewImg + '"]')
         let nextTarget = currentFile.parents('tr').prev('tr').find('.file-preview');
 
         if (nextTarget.length === 0) {
-            nextTarget = $('#content_list .file-preview').last();
+            nextTarget = $('.file-preview:visible').last();
         }
 
         showPreview(nextTarget);
@@ -693,7 +687,7 @@ $(document).ready(function () {
 
         $('select', this).each(function () {
 
-            const tagId = $(this).val();
+            const tagId = parseInt($(this).val(), 10);
 
             if (tagId === 0) {
                 return;

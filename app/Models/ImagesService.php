@@ -19,11 +19,6 @@ class ImagesService
 	private $imageModel;
 
 	/**
-	 * @var ImagesTag
-	 */
-	private $imagesTagModel;
-
-	/**
 	 * @var StorageService
 	 */
 	private $storageService;
@@ -35,11 +30,10 @@ class ImagesService
 	 * @param ImagesTag $imagesTagModel
 	 * @param StorageService $storageService
 	 */
-	public function __construct(Image $imageModel, ImagesTag $imagesTagModel, StorageService $storageService)
+	public function __construct(Image $imageModel, StorageService $storageService)
 	{
 
 		$this->imageModel = $imageModel;
-		$this->imagesTagModel = $imagesTagModel;
 		$this->storageService = $storageService;
 
 	}
@@ -66,18 +60,10 @@ class ImagesService
 			]
 		);
 
-		foreach ($imageTags as $tagId) {
+		$image->tags()->attach($imageTags);
 
-			$this->imagesTagModel->create(
-				[
-					'image_id' => $image->id,
-					'tag_id' => $tagId
-				]
-			);
-		}
-
-		
 		return $this->findImageWithTags($image->id);
+
 	}
 
 	/**
@@ -97,10 +83,7 @@ class ImagesService
 
 		$image->delete();
 
-		foreach ($this->findImageTags($imageId) as $imageTag) {
-
-			$imageTag->delete();
-		}
+		$image->tags()->detach();
 
 	}
 
@@ -122,23 +105,12 @@ class ImagesService
 			throw new ImagesException('Image not found');
 		}
 
+		$image->url = $this->getImageUrl($image->path);
+
 		return $image;
 
 	}
 
-	/**
-	 * Find image tags
-	 *
-	 * @param integer $imageId
-	 *
-	 * @return Image
-	 */
-	public function findImageTags($imageId)
-	{
-
-		return $this->imagesTagModel->where('image_id', $imageId)->with('tag')->get();
-
-	}
 
 	/**
 	 * Find image with tags
@@ -153,7 +125,7 @@ class ImagesService
 
 		$image = $this->findImage($imageId);
 
-		$image->tags = $this->findImageTags($imageId);
+		$image->load('tags');
 
 		return $image;
 
@@ -167,20 +139,33 @@ class ImagesService
 	public function imagesList()
 	{
 
-		$tagsList = $this->imagesTagModel->with('tag')->get()->groupBy('image_id')->toArray();
+		$imagesTagsList = $this->imageModel->with('tags')->get();
 
 		$imagesList = [];
 
-		foreach ($this->imageModel->all() as $image) {
+		foreach ($imagesTagsList as $image) {
 
-			$image->url = $this->storageService->fileUrl($image->path);
-			$image->tags = $tagsList[$image->id] ?? [];
+			$image->url = $this->getImageUrl($image->path);
 
 			$imagesList[] = $image;
 
 		}
 
 		return $imagesList;
+
+	}
+
+	/**
+	 * Return image url
+	 *
+	 * @param string $imagePath
+	 *
+	 * @return string
+	 */
+	protected function getImageUrl($imagePath)
+	{
+
+		return $this->storageService->fileUrl($imagePath);
 
 	}
 
