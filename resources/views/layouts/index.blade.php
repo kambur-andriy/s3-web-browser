@@ -2,7 +2,7 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
 
-    <title>MEA</title>
+    <title>S3 Web Browser</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -22,7 +22,7 @@
     <script src="/js/theme/material-dashboard.min.js?v=2.1.0" type="text/javascript"></script>
 
     <!-- Application -->
-    <script src="/js/application.js" type="text/javascript"></script>
+    <script src="/js/account.js" type="text/javascript"></script>
 
 </head>
 <body>

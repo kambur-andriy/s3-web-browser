@@ -22,7 +22,7 @@
 	<script src="/js/theme/material-dashboard.min.js?v=2.1.0" type="text/javascript"></script>
 
 	<!--  User scripts    -->
-	<script src="/js/application.js" type="text/javascript"></script>
+	<script src="/js/browser.js" type="text/javascript"></script>
 
 
 </head>
