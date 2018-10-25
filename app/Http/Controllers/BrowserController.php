@@ -16,7 +16,7 @@ use App\Models\StorageService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 
-class ApiController extends Controller
+class BrowserController extends Controller
 {
 
 	private $storageService;

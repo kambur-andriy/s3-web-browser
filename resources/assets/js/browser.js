@@ -10,7 +10,7 @@ const getContent = (path = '.') => {
     startProcess();
 
     axios.get(
-        '/api/list',
+        '/browser/list',
         {
             params: {
                 path
@@ -35,6 +35,7 @@ const getContent = (path = '.') => {
         .catch(
             error => {
 
+                console.log(error.response.data);
                 stopProcess();
 
                 showError(error.response.data.message);
@@ -293,7 +294,7 @@ const makeDirectory = () => {
     startProcess();
 
     axios.post(
-        '/api/make-directory',
+        '/browser/make-directory',
         qs.stringify(
             {
                 'path': currentDirectory + '/' + directoryName,
@@ -341,7 +342,7 @@ const renameContent = path => {
     startProcess();
 
     axios.post(
-        '/api/rename',
+        '/browser/rename',
         qs.stringify(
             {
                 'path': path,
@@ -400,7 +401,7 @@ const removeContent = () => {
     startProcess();
 
     axios.post(
-        '/api/remove',
+        '/browser/remove',
         qs.stringify(
             {
                 'path_list': pathToRemove,
@@ -454,7 +455,7 @@ const pasteContent = () => {
     startProcess();
 
     axios.post(
-        '/api/paste',
+        '/browser/paste',
         qs.stringify(
             {
                 'operation': pasteContent.operation,
@@ -522,7 +523,7 @@ const uploadFiles = (files = null) => {
     startProcess();
 
     axios.post(
-        '/api/upload',
+        '/browser/upload',
         requestData
     )
         .then(
@@ -660,7 +661,7 @@ $(document).ready(function () {
         showSpinner(button);
 
         axios.get(
-            '/api/info',
+            '/browser/info',
             {
                 params: {
                     path
@@ -740,7 +741,7 @@ $(document).ready(function () {
 
         const path = $(this).parents('tr').find('input[type="checkbox"]').val();
 
-        window.open('/api/download?path=' + path, '_blanc');
+        window.open('/browser/download?path=' + path, '_blanc');
 
     });
 

@@ -2,7 +2,7 @@
 
 @section('content')
 
-	<div id="page" class="container-fluid d-flex flex-column">
+	<div id="login_page" class="container-fluid d-flex flex-column">
 
 		<div id="page-content" class="row flex-grow-1 d-flex justify-content-center align-items-center">
 

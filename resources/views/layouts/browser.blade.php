@@ -22,6 +22,7 @@
 	<script src="/js/theme/material-dashboard.min.js?v=2.1.0" type="text/javascript"></script>
 
 	<!--  User scripts    -->
+	<script src="/js/account.js" type="text/javascript"></script>
 	<script src="/js/browser.js" type="text/javascript"></script>
 
 
@@ -146,7 +147,18 @@
 
 					</form>
 
-					<ul class="navbar-nav"> </ul>
+					<ul class="navbar-nav">
+
+						<li class="nav-item">
+							<a id="log_out" class="nav-link" href="">
+								<i class="material-icons">exit_to_app</i>
+								<p class="d-lg-none d-md-block">
+									Log Out
+								</p>
+							</a>
+						</li>
+					</ul>
+
 				</div>
 
 			</div>

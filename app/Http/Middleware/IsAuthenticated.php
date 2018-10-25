@@ -2,30 +2,35 @@
 
 namespace App\Http\Middleware;
 
-use App\Facades\Account;
-use App\Models\Account\AuthService;
 use Closure;
-use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 
 class IsAuthenticated
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
-     * @return mixed
-     */
-    public function handle($request, Closure $next, $guard = null)
-    {
-    	$authService = App::make(AuthService::class);
+	/**
+	 * Handle an incoming request.
+	 *
+	 * @param  \Illuminate\Http\Request $request
+	 * @param  \Closure $next
+	 * @param  string|null $guard
+	 * @return mixed
+	 */
+	public function handle($request, Closure $next, $guard = null)
+	{
 
+		if (!Auth::check()) {
+			if ($request->ajax()) {
+				return response()->json(
+					[
+						'message' => 'You have no access to this action.',
+					],
+					401
+				);
+			}
 
-        if (!$authService->check()) {
-            return redirect('/');
-        }
+			return redirect()->route('login');
+		}
 
-        return $next($request);
-    }
+		return $next($request);
+	}
 }

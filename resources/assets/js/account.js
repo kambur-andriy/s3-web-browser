@@ -46,4 +46,28 @@ $(document).ready(function () {
             )
     });
 
+    $('#log_out').on('click', function (event) {
+
+        event.preventDefault();
+
+        axios.post(
+            '/account/logout',
+            qs.stringify({})
+        )
+            .then(
+                () => {
+
+                    window.location.href = '/';
+
+                }
+            )
+            .catch(
+                error => {
+
+                    processErrors(error, $(this));
+
+                }
+            )
+    });
+
 });
