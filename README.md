@@ -47,7 +47,25 @@ S3 Web Browser is a Laravel application which allow working with S3 bucket via a
     
     * Open .env file and modify your Amazon credentials
     
+4. Configure Database
+
+    * Create database
     
+    * Open .env file and fill database access credentials 
+    
+    * Run migrations
+    
+    ```        
+        php artisan migrate
+    ```
+            
+    * Add users manually or run database seeder
+    
+    ```        
+       php artisan db:seed
+    ```        
+    
+            
 # Usage
 
 This application provide instruments for working with files and folders located on the S3 bucket.
